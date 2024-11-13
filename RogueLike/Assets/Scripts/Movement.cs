@@ -31,29 +31,28 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
 
+        float horizontalMove = Input.GetAxisRaw("Horizontal" + playerNumber);
+        float verticalMove = Input.GetAxisRaw("Vertical" + playerNumber);
 
-        horizontalMove = Input.GetAxis("Horizontal" + playerNumber);
-        verticalMove = Input.GetAxis("Vertical" + playerNumber);
-
+        // Create a normalized movement vector
         Vector2 movement = new Vector2(horizontalMove, verticalMove).normalized;
+
+        // Update Rigidbody velocity for instant movement
         rb.velocity = movement * moveSpeed;
 
-
+        // Flip sprite based on horizontal movement direction
         if (horizontalMove != 0)
         {
             spriteRenderer.flipX = horizontalMove < 0;
         }
-
-        movementInput.Normalize();
-
-        MovePlayer(movementInput);
     }
 
-    void MovePlayer(Vector2 movementInput)
-    {
-        transform.Translate(movementInput * moveSpeed * Time.deltaTime);
-    }
+
 
     public void TakeDamage(int damage)
     {

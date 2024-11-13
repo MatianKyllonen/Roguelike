@@ -6,10 +6,12 @@ public class Gun : MonoBehaviour
 {
     public float shootingRange = 10f;          // Range at which the gun can shoot
     public float fireRate = 1f;                // Time between each shot
+    public float bulletForce = 25f;
     public GameObject bulletPrefab;            // The bullet or projectile to shoot
     public Transform gunMuzzle;                // The point from where the bullet will be shot
     public LayerMask enemyLayer;               // Layer that represents enemies (set this in the inspector)
 
+    public SpriteRenderer gunSprite;
     private float nextFireTime = 0f;           // Time to control firing rate
 
     void Update()
@@ -22,6 +24,9 @@ public class Gun : MonoBehaviour
 
             if (nearestEnemy != null)
             {
+                // Rotate the gun towards the nearest enemy
+                RotateGunTowardsEnemy(nearestEnemy);
+
                 // Shoot at the nearest enemy
                 Shoot(nearestEnemy);
             }
@@ -63,10 +68,22 @@ public class Gun : MonoBehaviour
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.velocity = direction * 20f;  // Bullet speed (adjust as needed)
+            rb.velocity = direction * bulletForce;  // Bullet speed (adjust as needed)
         }
 
         // Update the next fire time based on fire rate
         nextFireTime = Time.time + 1f / fireRate;
+    }
+
+    // Rotates the gun towards the nearest enemy
+    void RotateGunTowardsEnemy(GameObject target)
+    {
+        Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
+
+        // Calculate the angle between the gun's current position and the target's position
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Rotate the gun to face the target direction
+        gunSprite.gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 }

@@ -7,20 +7,47 @@ public class BasicEnemy : MonoBehaviour
     private EnemySpawner spawner;
 
     public int maxHealth = 100;
-    int health = 0;
+    private int health = 0;
 
     public int damage;
+
+    // Sprite-related variables
+    public Sprite[] enemySprites;  // Array to hold the possible sprites
+    private SpriteRenderer spriteRenderer;  // The sprite renderer to change the sprite and color
+    private Color originalColor;  // The original color of the sprite for resetting
+
+    // Flashing effect parameters
+    public float flashDuration = 0.1f;  // Duration of the flash
+    private float flashTimer = 0f;  // Timer to track the flash duration
 
     // Start is called before the first frame update
     void Start()
     {
-        spawner = FindFirstObjectByType<EnemySpawner>();
+        spawner = FindObjectOfType<EnemySpawner>();
+        spriteRenderer = GetComponent<SpriteRenderer>();  // Get the SpriteRenderer component
         health = maxHealth;
+
+        spawner.EnemySpawned();
+
+        // Randomly assign a sprite from the list
+        if (enemySprites.Length > 0)
+        {
+            int randomIndex = Random.Range(0, enemySprites.Length);
+            spriteRenderer.sprite = enemySprites[randomIndex];  // Set a random sprite
+        }
+
+        // Save the original color to reset after flashing
+        originalColor = spriteRenderer.color;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (FindObjectOfType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
+
         // Find all game objects tagged as "Player"
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -50,6 +77,19 @@ public class BasicEnemy : MonoBehaviour
 
             // Move the enemy towards the player
             MoveTowardsPlayer();
+
+            // Flip the sprite to face the player
+            FlipSprite();
+        }
+
+        // Handle the flash effect if damage is taken
+        if (flashTimer > 0f)
+        {
+            flashTimer -= Time.deltaTime;
+            if (flashTimer <= 0f)
+            {
+                spriteRenderer.color = originalColor;  // Reset color after the flash
+            }
         }
     }
 
@@ -68,7 +108,7 @@ public class BasicEnemy : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<Movement>().TakeDamage(damage);
         }
@@ -78,9 +118,38 @@ public class BasicEnemy : MonoBehaviour
     {
         health -= damage;
 
+        // Trigger the red flash when the enemy takes damage
+        FlashRed();
+
         if (health <= 0)
         {
             Die();
+        }
+    }
+
+    // Flash the enemy sprite red for a short time
+    private void FlashRed()
+    {
+        spriteRenderer.color = Color.red;  // Change the sprite color to red
+        flashTimer = flashDuration;  // Start the flash timer
+    }
+
+    // Flip the sprite to face the player based on their position
+    private void FlipSprite()
+    {
+        if (targetPlayer == null)
+            return;
+
+        // Check if the player is to the left or right of the enemy
+        if (targetPlayer.position.x < transform.position.x)
+        {
+            // Flip the sprite to face left
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            // Flip the sprite to face right
+            spriteRenderer.flipX = false;
         }
     }
 
