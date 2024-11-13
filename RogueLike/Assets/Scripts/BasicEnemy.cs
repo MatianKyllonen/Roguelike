@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour
@@ -10,6 +8,8 @@ public class BasicEnemy : MonoBehaviour
 
     public int maxHealth = 100;
     int health = 0;
+
+    public int damage;
 
     // Start is called before the first frame update
     void Start()
@@ -66,11 +66,19 @@ public class BasicEnemy : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, targetPlayer.position, moveSpeed * Time.deltaTime);
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<Movement>().TakeDamage(damage);
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;
 
-        if(health <= 0)
+        if (health <= 0)
         {
             Die();
         }

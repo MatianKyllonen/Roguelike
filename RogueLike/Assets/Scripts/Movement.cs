@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Movement : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class Movement : MonoBehaviour
     private float verticalMove;
     private SpriteRenderer spriteRenderer;
     Rigidbody2D rb;
+
+    public Slider healthbar;
+    public TextMeshProUGUI healthCount;
 
     private void Start()
     {
@@ -50,9 +55,10 @@ public class Movement : MonoBehaviour
         transform.Translate(movementInput * moveSpeed * Time.deltaTime);
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         health -= damage;
+        CalculateHealth();
 
         if (health <= 0)
         {
@@ -63,5 +69,13 @@ public class Movement : MonoBehaviour
     void Die()
     {
         Destroy(gameObject);
+    }
+
+    void CalculateHealth()
+    {
+        healthCount.text = health.ToString() + "/" + maxHealth.ToString();
+        healthbar.value = ((float)health / (float)maxHealth);
+        
+
     }
 }
