@@ -1,7 +1,5 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -20,12 +18,18 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] public GameObject player1Selector;
     [SerializeField] public GameObject player2Selector;
 
+
+    [SerializeField] private GameObject player1;
+    [SerializeField] private GameObject player2;
+
     private int player1Index = 0;
     private int player2Index = 0;
     private Upgrade[] player1Upgrades;
     private Upgrade[] player2Upgrades;
     private GameObject[] player1Items;
     private GameObject[] player2Items;
+
+
 
     // Cooldown variables
     private float inputCooldown = 0.2f;  // Time in seconds between inputs
@@ -96,11 +100,6 @@ public class UpgradeManager : MonoBehaviour
 
     private void Update()
     {
-        // Open shop and prevent gameplay if shop is active
-        if (Input.GetKeyDown(KeyCode.L) && !shopOpen)
-        {
-            OpenShop();
-        }
 
         if (!shopOpen) return;  // Only handle input if shop is open
 
@@ -187,6 +186,31 @@ public class UpgradeManager : MonoBehaviour
 
     public void ApplyUpgrade(Upgrade upgrade, int playerNumber)
     {
+        Gun gun = FindPlayer(playerNumber).gameObject.GetComponent<Gun>();
+        Movement movement = FindPlayer(playerNumber).gameObject.GetComponent<Movement>();
+        switch (upgrade.name)
+        {          
+            case "Damage":    
+                
+                gun.damageMultiplier *= 1.2f;
+                break;
+
+            case "Fire Rate":
+                gun.fireRateMultiplier *= 1.2f;
+                break;
+
+            case "Move Speed":
+
+                movement.moveSpeedMultiplier *= 1.2f;
+                break;
+
+            default:
+
+                break;
+
+            
+        }
+
         Debug.Log("Applying upgrade: " + upgrade.name + " for Player " + playerNumber);
     }
 
@@ -208,11 +232,23 @@ public class UpgradeManager : MonoBehaviour
             shopOpen = false;  // Reset the shop open flag to allow gameplay to continue
         }
     }
+
+    private GameObject FindPlayer(int playerNumber)
+    {
+        if (playerNumber == 1)
+            return player1;
+
+        else if (playerNumber == 2)
+            return player2;
+
+        else return null;
+    }
 }
 
-[System.Serializable]
-public class Upgrade
-{
-    public string name;
-    [HideInInspector] public GameObject itemRef;
-}
+
+    [System.Serializable]
+    public class Upgrade
+    {
+        public string name;
+        [HideInInspector] public GameObject itemRef;
+    }

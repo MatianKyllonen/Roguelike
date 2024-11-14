@@ -1,9 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BasicEnemy : MonoBehaviour
 {
-    public float moveSpeed = 3f;  // Speed at which the enemy moves
-    private Transform targetPlayer;  // The transform of the nearest player
+    public float moveSpeed = 3f;          // Speed at which the enemy moves
+    private Transform targetPlayer;       // The transform of the nearest player
     private EnemySpawner spawner;
 
     public int maxHealth = 100;
@@ -12,19 +15,23 @@ public class BasicEnemy : MonoBehaviour
     public int damage;
 
     // Sprite-related variables
-    public Sprite[] enemySprites;  // Array to hold the possible sprites
-    private SpriteRenderer spriteRenderer;  // The sprite renderer to change the sprite and color
-    private Color originalColor;  // The original color of the sprite for resetting
+    public Sprite[] enemySprites;         // Array to hold the possible sprites
+    private SpriteRenderer spriteRenderer;// The sprite renderer to change the sprite and color
+    private Color originalColor;          // The original color of the sprite for resetting
 
     // Flashing effect parameters
-    public float flashDuration = 0.1f;  // Duration of the flash
-    private float flashTimer = 0f;  // Timer to track the flash duration
+    public float flashDuration = 0.1f;    // Duration of the flash
+    private float flashTimer = 0f;        // Timer to track the flash duration
 
-    // Start is called before the first frame update
+    public GameObject orb;
+
+    // Reference to the DamageIndicator prefab
+    public GameObject damageIndicatorPrefab;
+
     void Start()
     {
         spawner = FindObjectOfType<EnemySpawner>();
-        spriteRenderer = GetComponent<SpriteRenderer>();  // Get the SpriteRenderer component
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();  // Get the SpriteRenderer component
         health = maxHealth;
 
         spawner.EnemySpawned();
@@ -40,7 +47,6 @@ public class BasicEnemy : MonoBehaviour
         originalColor = spriteRenderer.color;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (FindObjectOfType<UpgradeManager>().shopOpen == true)
@@ -63,7 +69,7 @@ public class BasicEnemy : MonoBehaviour
         {
             float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-            if (distanceToPlayer < closestDistance)
+            if (distanceToPlayer < closestDistance && !player.gameObject.GetComponent<Movement>().knocked)
             {
                 closestDistance = distanceToPlayer;
                 nearestPlayer = player;
@@ -121,6 +127,9 @@ public class BasicEnemy : MonoBehaviour
         // Trigger the red flash when the enemy takes damage
         FlashRed();
 
+        // Show the damage indicator
+        ShowDamageIndicator(damage);
+
         if (health <= 0)
         {
             Die();
@@ -131,7 +140,7 @@ public class BasicEnemy : MonoBehaviour
     private void FlashRed()
     {
         spriteRenderer.color = Color.red;  // Change the sprite color to red
-        flashTimer = flashDuration;  // Start the flash timer
+        flashTimer = flashDuration;        // Start the flash timer
     }
 
     // Flip the sprite to face the player based on their position
@@ -155,7 +164,20 @@ public class BasicEnemy : MonoBehaviour
 
     void Die()
     {
+        if (Random.Range(0, 100) >= 50)
+            Instantiate(orb, transform.position, Quaternion.identity);
+
         spawner.EnemyDestroyed();
         Destroy(gameObject);
+    }
+
+    // Shows a floating damage indicator above the enemy
+    private void ShowDamageIndicator(int damage)
+    {
+        if (damageIndicatorPrefab != null)
+        {
+            GameObject indicator = Instantiate(damageIndicatorPrefab, transform.position, Quaternion.identity);
+            indicator.GetComponent<DamageIndicator>().SetDamageText(damage);
+        }
     }
 }

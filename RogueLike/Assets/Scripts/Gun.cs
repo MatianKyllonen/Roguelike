@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public float shootingRange = 10f;          // Range at which the gun can shoot
-    public float fireRate = 1f;                // Time between each shot
+    public float shootingRange = 10f;          
+    public float fireRate = 1f;
+    public float fireRateMultiplier = 1;
+
     public float bulletForce = 25f;
+
+    public float damage = 50;
+    public float damageMultiplier = 1;
+
     public GameObject bulletPrefab;            // The bullet or projectile to shoot
     public Transform gunMuzzle;                // The point from where the bullet will be shot
     public LayerMask enemyLayer;               // Layer that represents enemies (set this in the inspector)
@@ -16,6 +22,12 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
+
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
+
         // If it's time to fire and the player presses the fire button
         if (Time.time > nextFireTime)
         {
@@ -59,6 +71,8 @@ public class Gun : MonoBehaviour
     {
         // Create the bullet instance
         GameObject bullet = Instantiate(bulletPrefab, gunMuzzle.position, Quaternion.identity);
+        bullet.GetComponent<Bullet>().damage = Mathf.RoundToInt(damage * damageMultiplier);
+
         Destroy(bullet, 2f);
 
         // Calculate direction towards the target
@@ -72,7 +86,7 @@ public class Gun : MonoBehaviour
         }
 
         // Update the next fire time based on fire rate
-        nextFireTime = Time.time + 1f / fireRate;
+        nextFireTime = Time.time + 1f / (fireRate * fireRateMultiplier);
     }
 
     // Rotates the gun towards the nearest enemy

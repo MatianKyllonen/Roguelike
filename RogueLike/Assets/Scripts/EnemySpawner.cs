@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private List<Transform> spawnPoints;      // List of potential spawn points
 
     [Header("Attributes")]
-    [SerializeField] private int baseEnemiesPerWave = 10;      // Number of enemies to spawn per wave
+    [SerializeField] private int baseWaveWeight = 50;          // Total "weight" of enemies to spawn per wave
     [SerializeField] private float spawnInterval = 1f;         // Time between enemy spawns
     [SerializeField] private float timeBetweenWaves = 5f;      // Time between each wave
 
@@ -19,10 +19,10 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float minSpawnInterval = 0.3f;         // Minimum spawn interval
 
     private int currentWave = 0;            // The current wave number
-    private int enemiesLeftToSpawn;         // Number of enemies left to spawn in the current wave
+    private int waveWeight;                 // The weight limit of enemies for the current wave
     private int enemiesAlive = 0;           // Number of enemies currently alive
     private bool isSpawning = false;        // Whether the spawner is actively spawning enemies
-
+    private int remainingWeight = 0;
     private void Start()
     {
         StartCoroutine(StartWave()); // Start the first wave
@@ -42,8 +42,8 @@ public class EnemySpawner : MonoBehaviour
         currentWave += 1;
         isSpawning = true;
 
-        // Increase enemies per wave and the difficulty curve
-        enemiesLeftToSpawn = baseEnemiesPerWave + Mathf.FloorToInt(currentWave * 5f);  // Adjust the enemy scaling per wave
+        // Increase the weight limit per wave based on a difficulty curve
+        waveWeight = baseWaveWeight + Mathf.FloorToInt(currentWave * 10f);  // Adjust wave weight per wave
         waveCounter.text = "Wave: " + currentWave;    // Update wave counter UI
 
         yield return new WaitForSeconds(timeBetweenWaves); // Wait before starting the wave
@@ -51,26 +51,46 @@ public class EnemySpawner : MonoBehaviour
         // Decrease the spawn interval as the game progresses
         spawnInterval = Mathf.Max(minSpawnInterval, spawnInterval - spawnIntervalDecrement); // Prevent going below a threshold
 
-        while (enemiesLeftToSpawn > 0)
+        remainingWeight = waveWeight; // Track remaining weight for the current wave
+
+        // Loop until the wave's weight is filled
+        while (remainingWeight > 0)
         {
-            SpawnEnemy();               // Spawn an enemy
-            enemiesLeftToSpawn--;       // Decrement count of enemies left to spawn
+            GameObject enemyToSpawn = SelectEnemy(remainingWeight); // Select an eligible enemy
+            if (enemyToSpawn == null) break; // Break if no enemies fit the remaining weight
+
+            // Spawn the selected enemy at a random spawn point
+            Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+            Instantiate(enemyToSpawn, randomSpawnPoint.position, Quaternion.identity);
+
+            remainingWeight -= enemyToSpawn.GetComponent<EnemyInfo>().weight; // Deduct enemy weight from remaining weight         
             yield return new WaitForSeconds(spawnInterval); // Wait before spawning the next enemy
         }
 
         isSpawning = false;             // Wave spawning finished
     }
 
-    private void SpawnEnemy()
+    // Select an eligible enemy based on the remaining weight and current wave number
+    private GameObject SelectEnemy(int remainingWeight)
     {
-        // Select a random spawn point from the list
-        Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+        List<GameObject> eligibleEnemies = new List<GameObject>();
 
-        // Select a random enemy from the list
-        GameObject randomEnemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
+        // Filter eligible enemies based on minWaveToSpawn and weight
+        foreach (GameObject enemy in enemyPrefabs)
+        {
+            EnemyInfo enemyInfo = enemy.GetComponent<EnemyInfo>();
+            if (enemyInfo.minWaveToSpawn <= currentWave && enemyInfo.weight <= remainingWeight)
+            {
+                eligibleEnemies.Add(enemy);
+            }
+        }
 
-        // Instantiate the selected random enemy at the random spawn point
-        Instantiate(randomEnemyPrefab, randomSpawnPoint.position, Quaternion.identity);
+        // Return a random eligible enemy, or null if none are available
+        if (eligibleEnemies.Count > 0)
+        {
+            return eligibleEnemies[Random.Range(0, eligibleEnemies.Count)];
+        }
+        return null;
     }
 
     public void EnemySpawned()
