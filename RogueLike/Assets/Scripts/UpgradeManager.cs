@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -18,29 +19,25 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] public GameObject player1Selector;
     [SerializeField] public GameObject player2Selector;
 
-
     [SerializeField] private GameObject player1;
     [SerializeField] private GameObject player2;
 
+    [Header("Spawnables")]
+    public GameObject shootingDrone;
+
     private int player1Index = 0;
     private int player2Index = 0;
-    private Upgrade[] player1Upgrades;
-    private Upgrade[] player2Upgrades;
+    private Upgrade[] currentUpgrades;
     private GameObject[] player1Items;
     private GameObject[] player2Items;
 
-
-
-    // Cooldown variables
-    private float inputCooldown = 0.2f;  // Time in seconds between inputs
+    private float inputCooldown = 0.2f;
     private float player1CooldownTimer = 0;
     private float player2CooldownTimer = 0;
 
-    // Track if each player has selected an upgrade
     private bool player1Selected = false;
     private bool player2Selected = false;
 
-    // Track if the shop is open
     public bool shopOpen = false;
 
     private void Awake()
@@ -55,55 +52,14 @@ public class UpgradeManager : MonoBehaviour
 
     private void Start()
     {
-        player1Upgrades = GetRandomUpgrades(3);
-        player2Upgrades = GetRandomUpgrades(3);
-
-        player1Items = new GameObject[player1Upgrades.Length];
-        for (int i = 0; i < player1Upgrades.Length; i++)
-        {
-            Upgrade upgrade = player1Upgrades[i];
-            GameObject item1 = Instantiate(itemPrefab, player1ShopContent);
-            player1Items[i] = item1;
-            upgrade.itemRef = item1;
-
-            foreach (Transform child in item1.transform)
-            {
-                if (child.gameObject.name == "Name")
-                {
-                    TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
-                    textMeshPro.text = upgrade.name;
-                }
-            }
-        }
-
-        player2Items = new GameObject[player2Upgrades.Length];
-        for (int i = 0; i < player2Upgrades.Length; i++)
-        {
-            Upgrade upgrade = player2Upgrades[i];
-            GameObject item2 = Instantiate(itemPrefab, player2ShopContent);
-            player2Items[i] = item2;
-            upgrade.itemRef = item2;
-
-            foreach (Transform child in item2.transform)
-            {
-                if (child.gameObject.name == "Name")
-                {
-                    TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
-                    textMeshPro.text = upgrade.name;
-                }
-            }
-        }
-
-        UpdateSelectorPosition(player1Selector, player1Items, player1Index);
-        UpdateSelectorPosition(player2Selector, player2Items, player2Index);
+        currentUpgrades = new Upgrade[3];
     }
 
     private void Update()
     {
+        if (!shopOpen) return;
 
-        if (!shopOpen) return;  // Only handle input if shop is open
-
-        if (player1Selected && player2Selected) return;  // Stop if both players have selected
+        if (player1Selected && player2Selected) return;
 
         player1CooldownTimer -= Time.deltaTime;
         player2CooldownTimer -= Time.deltaTime;
@@ -113,13 +69,13 @@ public class UpgradeManager : MonoBehaviour
         {
             if (player1Input > 0.1f)
             {
-                player1Index = (player1Index - 1 + player1Upgrades.Length) % player1Upgrades.Length;
+                player1Index = (player1Index - 1 + currentUpgrades.Length) % currentUpgrades.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
             }
             else if (player1Input < -0.1f)
             {
-                player1Index = (player1Index + 1) % player1Upgrades.Length;
+                player1Index = (player1Index + 1) % currentUpgrades.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
             }
@@ -130,13 +86,13 @@ public class UpgradeManager : MonoBehaviour
         {
             if (player2Input > 0.1f)
             {
-                player2Index = (player2Index - 1 + player2Upgrades.Length) % player2Upgrades.Length;
+                player2Index = (player2Index - 1 + currentUpgrades.Length) % currentUpgrades.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
             }
             else if (player2Input < -0.1f)
             {
-                player2Index = (player2Index + 1) % player2Upgrades.Length;
+                player2Index = (player2Index + 1) % currentUpgrades.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
             }
@@ -144,17 +100,17 @@ public class UpgradeManager : MonoBehaviour
 
         if (Input.GetButtonDown("Submit1") && !player1Selected)
         {
-            ApplyUpgrade(player1Upgrades[player1Index], 1);
+            ApplyUpgrade(currentUpgrades[player1Index], 1);
             player1Selected = true;
-            player1ShopUI.SetActive(false);  // Close Player 1's shop panel
+            player1ShopUI.SetActive(false);
             CheckBothPlayersSelected();
         }
 
         if (Input.GetButtonDown("Submit2") && !player2Selected)
         {
-            ApplyUpgrade(player2Upgrades[player2Index], 2);
+            ApplyUpgrade(currentUpgrades[player2Index], 2);
             player2Selected = true;
-            player2ShopUI.SetActive(false);  // Close Player 2's shop panel
+            player2ShopUI.SetActive(false);
             CheckBothPlayersSelected();
         }
     }
@@ -189,9 +145,8 @@ public class UpgradeManager : MonoBehaviour
         Gun gun = FindPlayer(playerNumber).gameObject.GetComponent<Gun>();
         Movement movement = FindPlayer(playerNumber).gameObject.GetComponent<Movement>();
         switch (upgrade.name)
-        {          
-            case "Damage":    
-                
+        {
+            case "Damage":
                 gun.damageMultiplier *= 1.2f;
                 break;
 
@@ -200,28 +155,72 @@ public class UpgradeManager : MonoBehaviour
                 break;
 
             case "Move Speed":
-
                 movement.moveSpeedMultiplier *= 1.2f;
+                break;
+            case "Shooting Drone":
+                SpawnUpgrade(shootingDrone, FindPlayer(playerNumber).gameObject.transform);
                 break;
 
             default:
-
                 break;
-
-            
         }
-
-        Debug.Log("Applying upgrade: " + upgrade.name + " for Player " + playerNumber);
     }
 
     public void OpenShop()
     {
+        currentUpgrades = GetRandomUpgrades(3);
+
+        player1Selected = false;
+        player2Selected = false;
+
+        player1Items = InitializeShop(player1ShopContent, currentUpgrades);
+        player2Items = InitializeShop(player2ShopContent, currentUpgrades);
+
+        player1Index = 0;
+        player2Index = 0;
+
+        UpdateSelectorPosition(player1Selector, player1Items, player1Index);
+        UpdateSelectorPosition(player2Selector, player2Items, player2Index);
+
         upgradeScreen.SetActive(true);
         player1ShopUI.SetActive(true);
         player2ShopUI.SetActive(true);
-        player1Selected = false;
-        player2Selected = false;
-        shopOpen = true;  // Flag the shop as open to restrict player movement
+        shopOpen = true;
+    }
+
+    private GameObject[] InitializeShop(Transform shopContent, Upgrade[] upgradesToDisplay)
+    {
+        foreach (Transform child in shopContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        GameObject[] items = new GameObject[upgradesToDisplay.Length];
+        for (int i = 0; i < upgradesToDisplay.Length; i++)
+        {
+            Upgrade upgrade = upgradesToDisplay[i];
+            GameObject item = Instantiate(itemPrefab, shopContent);
+            items[i] = item;
+
+            foreach (Transform child in item.transform)
+            {
+                if (child.gameObject.name == "Name")
+                {
+                    TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
+                    textMeshPro.text = upgrade.name;
+                }
+                if (child.gameObject.name == "Description")
+                {
+                    TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
+                    textMeshPro.text = upgrade.description;
+                }
+                if (child.gameObject.name == "Icon")
+                {
+                    child.gameObject.GetComponent<Image>().sprite = upgrade.icon;
+                }
+            }
+        }
+        return items;
     }
 
     private void CheckBothPlayersSelected()
@@ -229,7 +228,7 @@ public class UpgradeManager : MonoBehaviour
         if (player1Selected && player2Selected)
         {
             upgradeScreen.SetActive(false);
-            shopOpen = false;  // Reset the shop open flag to allow gameplay to continue
+            shopOpen = false;
         }
     }
 
@@ -237,18 +236,25 @@ public class UpgradeManager : MonoBehaviour
     {
         if (playerNumber == 1)
             return player1;
-
         else if (playerNumber == 2)
             return player2;
-
-        else return null;
+        return null;
     }
+
+    private void SpawnUpgrade(GameObject itemToSpawn, Transform droneTarget)
+    {
+        GameObject spawnable = Instantiate(itemToSpawn, droneTarget.position, Quaternion.identity);
+        spawnable.GetComponent<DroneBasic>().target = droneTarget;
+    }
+
 }
 
-
-    [System.Serializable]
-    public class Upgrade
-    {
-        public string name;
-        [HideInInspector] public GameObject itemRef;
-    }
+[System.Serializable]
+public class Upgrade
+{
+    public string name;
+    public string description;
+    public int maxlevel;
+    public Sprite icon;
+    [HideInInspector] public GameObject itemRef;
+}

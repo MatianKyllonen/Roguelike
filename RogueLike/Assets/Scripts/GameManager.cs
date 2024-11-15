@@ -8,20 +8,21 @@ public class Gamemanager : MonoBehaviour
     public static Gamemanager instance;
 
     private int level = 0;
-    private float nextlevelXp = 100;
+    private float nextlevelXp = 100; 
     private int currentXp = 0;
+    private float xpMultiplier = 1.4f; 
 
     private UpgradeManager upgradesManager;
 
     public Slider levelBar;
     public TextMeshProUGUI levelCount;
+
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
         }
-
     }
 
     private void Start()
@@ -35,7 +36,6 @@ public class Gamemanager : MonoBehaviour
         {
             LevelUp();
         }
-
     }
 
     public void IncreaseXp(int amount)
@@ -54,7 +54,8 @@ public class Gamemanager : MonoBehaviour
     {
         level += 1;
         currentXp = 0;
-        nextlevelXp = Mathf.RoundToInt(nextlevelXp * 1.5f);
+
+        nextlevelXp *= xpMultiplier;
 
         CalculateXp();
 
@@ -63,14 +64,12 @@ public class Gamemanager : MonoBehaviour
 
     void CalculateXp()
     {
-        levelCount.text = currentXp.ToString() + "/" + nextlevelXp.ToString();
-        levelBar.value = ((float)currentXp / (float)nextlevelXp);
+        levelCount.text = "Level: " + level;
+        levelBar.value = ((float)currentXp / nextlevelXp);
     }
 
     public void GameLost()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
-
 }
