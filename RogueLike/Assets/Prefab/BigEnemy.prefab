@@ -279,6 +279,7 @@ MonoBehaviour:
   flashDuration: 0.1
   orb: {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
+  hurtSound: {fileID: 0}
 --- !u!61 &3654343721795712825
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -336,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d05483f958f284d94cea86c46411ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 2
+  weight: 3
   minWaveToSpawn: 4
 --- !u!50 &8168847255472010660
 Rigidbody2D:

@@ -28,11 +28,17 @@ public class BasicEnemy : MonoBehaviour
     // Reference to the DamageIndicator prefab
     public GameObject damageIndicatorPrefab;
 
+    private AudioSource audioSource;
+    public AudioClip hurtSound;
+
     void Start()
     {
         spawner = FindObjectOfType<EnemySpawner>();
+        audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();  // Get the SpriteRenderer component
         health = maxHealth;
+
+       
 
         spawner.EnemySpawned();
 
@@ -123,6 +129,8 @@ public class BasicEnemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+
+        audioSource.PlayOneShot(hurtSound, 0.2f);
 
         // Trigger the red flash when the enemy takes damage
         FlashRed();

@@ -19,9 +19,15 @@ public class Gun : MonoBehaviour
 
     public SpriteRenderer gunSprite;
     private float nextFireTime = 0f;           // Time to control firing rate
+    private AudioSource audioSoure;
+    public AudioClip shotSound;
 
-    void Update()
+    private void Start()
     {
+        audioSoure = GetComponent<AudioSource>();
+    }
+    void Update()
+    {       
 
         if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
         {
@@ -74,6 +80,8 @@ public class Gun : MonoBehaviour
         bullet.GetComponent<Bullet>().damage = Mathf.RoundToInt(damage * damageMultiplier);
 
         Destroy(bullet, 2f);
+
+        audioSoure.PlayOneShot(shotSound, 0.2f);
 
         // Calculate direction towards the target
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;

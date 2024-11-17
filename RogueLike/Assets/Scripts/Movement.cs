@@ -43,8 +43,12 @@ public class Movement : MonoBehaviour
     private bool dashing;
     public Animator animator;
 
+    private AudioSource audioSoure;
+    public AudioClip dashSound;
+
     private void Start()
     {
+        audioSoure = GetComponent<AudioSource>();
         shooting = GetComponent<Gun>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -112,7 +116,8 @@ public class Movement : MonoBehaviour
     }
 
     void Dash()
-    {      
+    {
+        audioSoure.PlayOneShot(dashSound, 0.2f);
         dashing = true;
         StartCoroutine(ResetVelocityAfterDash(dashTime));
     }
