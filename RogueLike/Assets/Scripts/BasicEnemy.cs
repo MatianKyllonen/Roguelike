@@ -14,10 +14,12 @@ public class BasicEnemy : MonoBehaviour
 
     public int damage;
 
-    // Sprite-related variables
-    public Sprite[] enemySprites;         // Array to hold the possible sprites
+    // Sprite-related variables      // Array to hold the possible sprites
     private SpriteRenderer spriteRenderer;// The sprite renderer to change the sprite and color
     private Color originalColor;          // The original color of the sprite for resetting
+
+
+    public GameObject spawnedObject; // Object to spawn on death
 
     // Flashing effect parameters
     public float flashDuration = 0.1f;    // Duration of the flash
@@ -43,11 +45,6 @@ public class BasicEnemy : MonoBehaviour
         spawner.EnemySpawned();
 
         // Randomly assign a sprite from the list
-        if (enemySprites.Length > 0)
-        {
-            int randomIndex = Random.Range(0, enemySprites.Length);
-            spriteRenderer.sprite = enemySprites[randomIndex];  // Set a random sprite
-        }
 
         // Save the original color to reset after flashing
         originalColor = spriteRenderer.color;
@@ -174,6 +171,11 @@ public class BasicEnemy : MonoBehaviour
     {
         if (Random.Range(0, 100) >= 50)
             Instantiate(orb, transform.position, Quaternion.identity);
+
+        if (spawnedObject != null)
+        {
+            Instantiate(spawnedObject, transform.position, Quaternion.identity);
+        }
 
         spawner.EnemyDestroyed();
         Destroy(gameObject);

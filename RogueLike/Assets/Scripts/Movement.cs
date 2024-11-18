@@ -142,7 +142,17 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Heal(float healingAmount)
+    {
+        health += Mathf.RoundToInt(healingAmount);
+
+        if (health > maxHealth)
+            health = maxHealth;
+
+        CalculateHealth();
+    }
+
+        void Die()
     {
         spriteRenderer.sprite = knockdownSprite;
         knocked = true;

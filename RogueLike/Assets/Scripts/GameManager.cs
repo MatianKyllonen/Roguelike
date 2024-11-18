@@ -10,7 +10,7 @@ public class Gamemanager : MonoBehaviour
     private int level = 0;
     private float nextlevelXp = 100; 
     private int currentXp = 0;
-    private float xpMultiplier = 1.4f; 
+    private float xpMultiplier = 1.3f; 
 
     private UpgradeManager upgradesManager;
 

@@ -16,6 +16,11 @@ public class DroneBasic : MonoBehaviour
 
     void Update()
     {
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
+
         FollowTarget();
         FlipSprite();
     }

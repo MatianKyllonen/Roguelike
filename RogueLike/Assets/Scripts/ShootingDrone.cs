@@ -18,6 +18,11 @@ public class ShootingDrone : MonoBehaviour
 
     void Update()
     {
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
+
         if (Time.time > nextFireTime)
         {
             GameObject nearestEnemy = FindNearestEnemy();
