@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +26,7 @@ public class UpgradeManager : MonoBehaviour
     [Header("Spawnables")]
     public GameObject shootingDrone;
     public GameObject healingDrone;
+    public GameObject explosiveDrone;
 
     private int player1Index = 0;
     private int player2Index = 0;
@@ -177,7 +177,7 @@ public class UpgradeManager : MonoBehaviour
         {
 
             case "Damage":
-                gun.damageMultiplier *= 1.2f;
+                gun.damageMultiplier *= 1.3f;
                 break;
 
             case "Fire Rate":
@@ -185,39 +185,48 @@ public class UpgradeManager : MonoBehaviour
                 break;
 
             case "Move Speed":
-                movement.moveSpeedMultiplier *= 1.2f;
+                movement.moveSpeedMultiplier *= 1.1f;
                 break;
 
             case "Shooting Drone":
 
                 if (level == 0)
                 {
+                    // 35 Damage
+                    // 0.80 Fire Rate
                     SpawnUpgrade(shootingDrone, FindPlayer(playerNumber).transform, playerNumber);
                 }
-                else if(level == 1)
+                else if (level == 1)
                 {
+                    // 52 Damage
                     IncreaseDroneDamage(playerNumber, 1.50f);
                 }
                 else if (level == 2)
                 {
-                    IncreaseFireRate(playerNumber, 1.30f);
+                    // 78 Damage
+                    // 1.04 Fire Rate
                     IncreaseDroneDamage(playerNumber, 1.50f);
+                    IncreaseFireRate(playerNumber, 1.30f);                  
 
                 }
                 else if (level == 3)
                 {
-                    IncreaseFireRate(playerNumber, 1.30f);
+                    // 1.56 Fire Rate
+                    IncreaseFireRate(playerNumber, 1.50f);
 
                 }
                 else if (level == 4)
                 {
-                    IncreaseDroneDamage(playerNumber, 1.20f);
+                    // 102 Damage
+                    IncreaseDroneDamage(playerNumber, 1.30f);
 
                 }
                 else if (level == 5)
                 {
-                    IncreaseFireRate(playerNumber, 1.20f);
+                    // 122 Damage
+                    // 2.34 Fire Rate
                     IncreaseDroneDamage(playerNumber, 1.20f);
+                    IncreaseFireRate(playerNumber, 1.50f);
                 }
 
                 break;
@@ -255,6 +264,41 @@ public class UpgradeManager : MonoBehaviour
                 }
 
                 break;
+            case "Explosive Drone":
+
+                if (level == 0)
+                {
+                    SpawnUpgrade(explosiveDrone, FindPlayer(playerNumber).transform, playerNumber);
+                }
+                else if (level == 1)
+                {
+                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
+                }
+                else if (level == 2)
+                {
+                    IncreaseExposionDroneFireRate(playerNumber, 1.10f);
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+
+                }
+                else if (level == 3)
+                {
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
+
+                }
+                else if (level == 4)
+                {
+                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
+
+                }
+                else if (level == 5)
+                {
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    IncreaseExposionDroneFireRate(playerNumber, 1.30f);
+                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
+                }
+
+                break;
 
             default:
                 break;
@@ -263,22 +307,31 @@ public class UpgradeManager : MonoBehaviour
         playerUpgradeLevels[playerNumber][upgrade.name]++;
     }
 
+    private Upgrade GetNewUpgradeNotMaxed(int playerNumber, Upgrade currentUpgrade)
+    {
+        Upgrade newUpgrade;
+        do
+        {
+            newUpgrade = upgrades[Random.Range(0, upgrades.Length)];
+        }
+        while (newUpgrade.name == currentUpgrade.name || playerUpgradeLevels[playerNumber][newUpgrade.name] >= newUpgrade.maxlevel);
+
+        return newUpgrade;
+    }
 
 
     public void OpenShop()
     {
         currentUpgrades = GetRandomUpgrades(3);
-
         player1Selected = false;
-        player2Selected = false;
-
         player1Items = InitializeShop(player1ShopContent, currentUpgrades, 1);
-        player2Items = InitializeShop(player2ShopContent, currentUpgrades, 2);
-
         player1Index = 0;
-        player2Index = 0;
-
         UpdateSelectorPosition(player1Selector, player1Items, player1Index);
+
+        currentUpgrades = GetRandomUpgrades(3);
+        player2Selected = false;
+        player2Items = InitializeShop(player2ShopContent, currentUpgrades, 2);
+        player2Index = 0;
         UpdateSelectorPosition(player2Selector, player2Items, player2Index);
 
         upgradeScreen.SetActive(true);
@@ -311,7 +364,6 @@ public class UpgradeManager : MonoBehaviour
                 if (child.gameObject.name == "Description")
                 {
                     TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
-                    // Update description based on player-specific upgrade level
                     textMeshPro.text = GetUpgradeDescription(upgrade, playerNumber); // Pass player number
                 }
                 if (child.gameObject.name == "Icon")
@@ -331,7 +383,7 @@ public class UpgradeManager : MonoBehaviour
         switch (upgrade.name)
         {
             case "Damage":
-                return $"Increase your damage by {20 * (upgradeLevel + 1)}%.";
+                return $"Increase your damage by {30 * (upgradeLevel + 1)}%.";
             case "Fire Rate":
                 return $"Increase your fire rate by {20 * (upgradeLevel + 1)}%.";
             case "Move Speed":
@@ -350,20 +402,26 @@ public class UpgradeManager : MonoBehaviour
             case "Healing Drone":
                 switch (upgradeLevel)
                 {
-                    case 0:
-                        return "Summon a healing drone to assist in battle by healing players."; // Basic drone summon
-                    case 1:
-                        return "Increase the drone's healing rate by 10%"; // Increase healing rate at level 1
-                    case 2:
-                        return "Increase the drone's healing rate by 10% and healing amount by 25%."; // Level 2, both rate and amount
-                    case 3:
-                        return "Increase the drone's healing rate by 10%."; // Level 3, improve healing rate further
-                    case 4:
-                        return "Increase the drone's healing amount by 50%."; // Level 4, boost healing amount
-                    case 5:
-                        return "Increase the drone's healing rate by 25% and healing amount by 30%."; // Level 5, balanced boost to both
+                    case 0: return "Summon a healing drone to assist in battle by healing players.";
+                    case 1: return "Increase the drone's healing rate by 10%";
+                    case 2: return "Increase the drone's healing rate by 10% and healing amount by 25%.";
+                    case 3: return "Increase the drone's healing rate by 10%.";
+                    case 4: return "Increase the drone's healing amount by 50%.";
+                    case 5: return "Increase the drone's healing rate by 25% and healing amount by 30%.";
                     default:
-                        return "No upgrade available."; // Default case for invalid levels
+                        return "No upgrade available.";
+                }
+            case "Explosive Drone":
+                switch (upgradeLevel)
+                {
+                    case 0: return "Summon a healing drone to assist in battle by healing players.";
+                    case 1: return "Increase the drone's healing rate by 10%";
+                    case 2: return "Increase the drone's healing rate by 10% and healing amount by 25%.";
+                    case 3: return "Increase the drone's healing rate by 10%.";
+                    case 4: return "Increase the drone's healing amount by 50%.";
+                    case 5: return "Increase the drone's healing rate by 25% and healing amount by 30%.";
+                    default:
+                        return "No upgrade available.";
                 }
             default:
                 return "No description available.";
@@ -414,11 +472,11 @@ public class UpgradeManager : MonoBehaviour
                 T component = item.GetComponent<T>();
                 if (component != null)
                 {
-                    return component; 
+                    return component;
                 }
             }
         }
-        return null; 
+        return null;
     }
 
 
@@ -430,7 +488,7 @@ public class UpgradeManager : MonoBehaviour
 
         if (drone != null)
         {
-            drone.damageMultiplier *= percentage;
+            drone.damage = Mathf.RoundToInt(drone.damage * percentage);
             Debug.Log($"Player {playerNumber}'s drone damage increased!");
         }
         else
@@ -445,13 +503,9 @@ public class UpgradeManager : MonoBehaviour
 
         if (drone != null)
         {
-            drone.fireRateMultiplier *= percentage;
-            Debug.Log($"Player {playerNumber}'s drone damage increased!");
+            drone.fireRate = (drone.fireRate * percentage);
         }
-        else
-        {
-            Debug.Log("No drone found in inventory.");
-        }
+
     }
 
     //HEALING DRONE
@@ -463,11 +517,6 @@ public class UpgradeManager : MonoBehaviour
         if (drone != null)
         {
             drone.healingAmount = Mathf.RoundToInt(drone.healingAmount * percentage);
-            Debug.Log($"Player {playerNumber}'s drone healing increased!");
-        }
-        else
-        {
-            Debug.Log("No drone found in inventory.");
         }
     }
 
@@ -478,21 +527,55 @@ public class UpgradeManager : MonoBehaviour
         if (drone != null)
         {
             drone.healingInterval = (drone.healingInterval / percentage);
-            Debug.Log($"Player {playerNumber}'s drone healing increased!");
         }
-        else
-        {
-            Debug.Log("No drone found in inventory.");
-        }
+
     }
-}
-    [System.Serializable]
-    public class Upgrade
+
+    //Explosive Drone
+
+    private void IncreaseDroneExplosionDamage(int playerNumber, float percentage)
     {
-        public string name;
-        public string description;
-        public int maxlevel;
-        public Sprite icon;
-        [HideInInspector] public GameObject itemRef;
+        ExplosiveShotDrone drone = FindItemInInventory<ExplosiveShotDrone>(playerNumber);
+
+        if (drone != null)
+        {
+            drone.explosionDamage = Mathf.RoundToInt(drone.explosionDamage * percentage);
+
+        }
+
     }
+    private void IncreaseExposionDroneFireRate(int playerNumber, float percentage)
+    {
+        ExplosiveShotDrone drone = FindItemInInventory<ExplosiveShotDrone>(playerNumber);
+
+        if (drone != null)
+        {
+            drone.fireRate = (drone.fireRate / percentage);
+        }
+
+    }
+
+    private void IncreaseExposionDroneSpeed(int playerNumber, float percentage)
+    {
+        ExplosiveShotDrone drone = FindItemInInventory<ExplosiveShotDrone>(playerNumber);
+
+        if (drone != null)
+        {
+            DroneBasic basicDrone = drone.gameObject.GetComponent<DroneBasic>();
+            basicDrone.followSpeed = Mathf.RoundToInt(basicDrone.followSpeed * percentage);
+        }
+
+    }
+
+
+}
+[System.Serializable]
+public class Upgrade
+{
+    public string name;
+    public string description;
+    public int maxlevel;
+    public Sprite icon;
+    [HideInInspector] public GameObject itemRef;
+}
 

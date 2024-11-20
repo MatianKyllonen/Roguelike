@@ -46,6 +46,10 @@ public class Movement : MonoBehaviour
     private AudioSource audioSoure;
     public AudioClip dashSound;
 
+    private Color originalColor;          // The original color of the sprite for resetting
+    public float flashDuration = 0.1f;    // Duration of the flash
+    private float flashTimer = 0f;
+
     private void Start()
     {
         audioSoure = GetComponent<AudioSource>();
@@ -56,10 +60,22 @@ public class Movement : MonoBehaviour
         mainSprite = spriteRenderer.sprite;
         reviveBarUI.SetActive(false);
         animator.SetInteger("PlayerNumber", playerNumber);
+
+        originalColor = spriteRenderer.color;
     }
 
     void Update()
     {
+
+        if (flashTimer > 0f)
+        {
+            flashTimer -= Time.deltaTime;
+            if (flashTimer <= 0f)
+            {
+                spriteRenderer.color = originalColor;  // Reset color after the flash
+            }
+        }
+
         if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
         {
             rb.velocity = Vector2.zero;
@@ -70,6 +86,9 @@ public class Movement : MonoBehaviour
 
         if (knocked)
         {
+            if (health < 0)
+                health = 0;
+
             Movement otherPlayer = FindOtherPlayer();
             if (otherPlayer != null)
             {
@@ -109,6 +128,7 @@ public class Movement : MonoBehaviour
         }
         else
             dashBarUI.SetActive(false);
+
         if ((Input.GetButtonDown("Submit" + playerNumber)) && dashCooldownTimer <= 0)
         {
             Dash();
@@ -131,9 +151,23 @@ public class Movement : MonoBehaviour
         dashing = false;
     }
 
+    private void FlashRed()
+    {
+        spriteRenderer.color = Color.red; 
+        flashTimer = flashDuration;        
+    }
+
+
+    private void FlashGreen()
+    {
+        spriteRenderer.color = Color.green;
+        flashTimer = flashDuration;
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;
+        FlashRed();
         CalculateHealth();
 
         if (health <= 0)
@@ -145,6 +179,7 @@ public class Movement : MonoBehaviour
     public void Heal(float healingAmount)
     {
         health += Mathf.RoundToInt(healingAmount);
+        FlashGreen();
 
         if (health > maxHealth)
             health = maxHealth;
@@ -154,6 +189,7 @@ public class Movement : MonoBehaviour
 
         void Die()
     {
+        GetComponent<BoxCollider2D>().enabled = false;
         spriteRenderer.sprite = knockdownSprite;
         knocked = true;
         animator.SetBool("isKnocked", true);
@@ -194,6 +230,7 @@ public class Movement : MonoBehaviour
 
     void Revive()
     {
+        GetComponent<BoxCollider2D>().enabled = true;
         animator.SetBool("isKnocked", false);
         shooting.enabled = true;
         rb.isKinematic = false;

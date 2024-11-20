@@ -17,13 +17,11 @@ public class BasicEnemy : MonoBehaviour
     // Sprite-related variables      // Array to hold the possible sprites
     private SpriteRenderer spriteRenderer;// The sprite renderer to change the sprite and color
     private Color originalColor;          // The original color of the sprite for resetting
-
-
-    public GameObject spawnedObject; // Object to spawn on death
-
-    // Flashing effect parameters
     public float flashDuration = 0.1f;    // Duration of the flash
     private float flashTimer = 0f;        // Timer to track the flash duration
+
+
+    public GameObject spawnedObject;
 
     public GameObject orb;
 
@@ -119,7 +117,9 @@ public class BasicEnemy : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Movement>().TakeDamage(damage);
+            Movement player = collision.gameObject.GetComponent<Movement>();
+            if(!player.knocked)
+                player.TakeDamage(damage);
         }
     }
 

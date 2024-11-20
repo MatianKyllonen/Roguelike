@@ -214,8 +214,8 @@ MonoBehaviour:
   moveSpeed: 2
   maxHealth: 100
   damage: 10
-  spawnedObject: {fileID: 0}
   flashDuration: 0.1
+  spawnedObject: {fileID: 0}
   orb: {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootingRange: 7
-  fireRate: 0.2
+  fireRate: 0.3
   projectilePrefab: {fileID: 2062371035564790006, guid: d20c7043133d98b47a6e1a623f85f59f, type: 3}
 --- !u!61 &774143249289670754
 BoxCollider2D:
@@ -414,8 +414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d05483f958f284d94cea86c46411ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 3
-  minWaveToSpawn: 0
+  weight: 4
+  minWaveToSpawn: 3
 --- !u!1 &9033634016425224092
 GameObject:
   m_ObjectHideFlags: 0

@@ -297,8 +297,8 @@ MonoBehaviour:
   moveSpeed: 1.7
   maxHealth: 250
   damage: 14
-  spawnedObject: {fileID: 4230440292960051774, guid: 2082c4b1aa1a6ef48a774d4ab9f0ea0a, type: 3}
   flashDuration: 0.1
+  spawnedObject: {fileID: 4230440292960051774, guid: 2082c4b1aa1a6ef48a774d4ab9f0ea0a, type: 3}
   orb: {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 7
-  minWaveToSpawn: 4
+  minWaveToSpawn: 5
 --- !u!50 &8168847255472010660
 Rigidbody2D:
   serializedVersion: 4

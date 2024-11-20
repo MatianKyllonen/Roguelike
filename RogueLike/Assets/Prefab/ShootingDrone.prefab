@@ -343,7 +343,7 @@ MonoBehaviour:
   fireRate: 0.8
   fireRateMultiplier: 1
   bulletForce: 25
-  damage: 30
+  damage: 35
   damageMultiplier: 1
   bulletPrefab: {fileID: 2666669992267467572, guid: b2b5326a52d97a243a1d5c16a1b29560, type: 3}
   gunMuzzle: {fileID: 2707676311915795067}
