@@ -62,3 +62,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 1
   minWaveToSpawn: 0
+  maxWaveToSpawn: 10

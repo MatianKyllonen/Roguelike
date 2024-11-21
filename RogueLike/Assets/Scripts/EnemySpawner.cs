@@ -56,6 +56,12 @@ public class EnemySpawner : MonoBehaviour
         // Loop until the wave's weight is filled
         while (remainingWeight > 0)
         {
+            // Pause spawning while the shop is open
+            while (FindFirstObjectByType<UpgradeManager>().shopOpen)
+            {
+                yield return null; // Wait until the shop is closed before proceeding
+            }
+
             GameObject enemyToSpawn = SelectEnemy(remainingWeight); // Select an eligible enemy
             if (enemyToSpawn == null) break; // Break if no enemies fit the remaining weight
 
@@ -79,10 +85,11 @@ public class EnemySpawner : MonoBehaviour
         foreach (GameObject enemy in enemyPrefabs)
         {
             EnemyInfo enemyInfo = enemy.GetComponent<EnemyInfo>();
-            if (enemyInfo.minWaveToSpawn <= currentWave && enemyInfo.weight <= remainingWeight)
+            if (enemyInfo.minWaveToSpawn <= currentWave && enemyInfo.weight <= remainingWeight && (enemyInfo.maxWaveToSpawn > currentWave || enemyInfo.maxWaveToSpawn == 0))
             {
                 eligibleEnemies.Add(enemy);
             }
+
         }
 
         // Return a random eligible enemy, or null if none are available

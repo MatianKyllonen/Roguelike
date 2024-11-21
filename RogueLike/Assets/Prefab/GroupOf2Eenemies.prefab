@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 3
   minWaveToSpawn: 4
+  maxWaveToSpawn: 10
 --- !u!1001 &1235565324610982189
 PrefabInstance:
   m_ObjectHideFlags: 0

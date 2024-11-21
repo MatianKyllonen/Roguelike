@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,7 +31,8 @@ public class UpgradeManager : MonoBehaviour
 
     private int player1Index = 0;
     private int player2Index = 0;
-    private Upgrade[] currentUpgrades;
+    private Upgrade[] currentUpgrades1;
+    private Upgrade[] currentUpgrades2;
     private GameObject[] player1Items;
     private GameObject[] player2Items;
 
@@ -58,7 +60,8 @@ public class UpgradeManager : MonoBehaviour
 
     private void Start()
     {
-        currentUpgrades = new Upgrade[3];
+        currentUpgrades1 = new Upgrade[3];
+        currentUpgrades2 = new Upgrade[3];
         playerUpgradeLevels = new Dictionary<int, Dictionary<string, int>>()
     {
         { 1, new Dictionary<string, int>() },
@@ -88,13 +91,13 @@ public class UpgradeManager : MonoBehaviour
         {
             if (player1Input > 0.1f)
             {
-                player1Index = (player1Index - 1 + currentUpgrades.Length) % currentUpgrades.Length;
+                player1Index = (player1Index - 1 + currentUpgrades1.Length) % currentUpgrades1.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
             }
             else if (player1Input < -0.1f)
             {
-                player1Index = (player1Index + 1) % currentUpgrades.Length;
+                player1Index = (player1Index + 1) % currentUpgrades1.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
             }
@@ -105,13 +108,13 @@ public class UpgradeManager : MonoBehaviour
         {
             if (player2Input > 0.1f)
             {
-                player2Index = (player2Index - 1 + currentUpgrades.Length) % currentUpgrades.Length;
+                player2Index = (player2Index - 1 + currentUpgrades2.Length) % currentUpgrades2.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
             }
             else if (player2Input < -0.1f)
             {
-                player2Index = (player2Index + 1) % currentUpgrades.Length;
+                player2Index = (player2Index + 1) % currentUpgrades2.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
             }
@@ -119,20 +122,28 @@ public class UpgradeManager : MonoBehaviour
 
         if (Input.GetButtonDown("Submit1") && !player1Selected)
         {
-            ApplyUpgrade(currentUpgrades[player1Index], 1);
+            ApplyUpgrade(currentUpgrades1[player1Index], 1);
             player1Selected = true;
-            player1ShopUI.SetActive(false);
+            player1ShopUI.GetComponent<Animator>().SetTrigger("CloseShop");
+            StartCoroutine(CloseShopDelay(player1ShopUI));
             CheckBothPlayersSelected();
         }
 
         if (Input.GetButtonDown("Submit2") && !player2Selected)
-        {
-            ApplyUpgrade(currentUpgrades[player2Index], 2);
+        {          
+            ApplyUpgrade(currentUpgrades2[player2Index], 2);
             player2Selected = true;
-            player2ShopUI.SetActive(false);
+            player2ShopUI.GetComponent<Animator>().SetTrigger("CloseShop");
+            StartCoroutine(CloseShopDelay(player2ShopUI));
             CheckBothPlayersSelected();
         }
 
+    }
+
+    private IEnumerator CloseShopDelay(GameObject shop)
+    {
+        yield return new WaitForSeconds(0.5f);
+        shop.SetActive(false);
     }
 
     private void UpdateSelectorPosition(GameObject selector, GameObject[] items, int index)
@@ -235,31 +246,40 @@ public class UpgradeManager : MonoBehaviour
 
                 if (level == 0)
                 {
+                    // Healing 10
+                    // Healing Rate 15s
+                    // Speed 1
                     SpawnUpgrade(healingDrone, FindPlayer(playerNumber).transform, playerNumber);
                 }
                 else if (level == 1)
                 {
+                    // Healing Rate 13.5s
                     IncreaseDroneHealingRate(playerNumber, 1.10f);
                 }
                 else if (level == 2)
                 {
-                    IncreaseDroneHealingRate(playerNumber, 1.10f);
-                    IncreaseDroneHealing(playerNumber, 1.25f);
-
+                    // Healing 13
+                    // Healing Rate 11.3s
+                    IncreaseDroneHealing(playerNumber, 1.3f);
+                    IncreaseDroneHealingRate(playerNumber, 1.20f);                
                 }
                 else if (level == 3)
                 {
-                    IncreaseDroneHealing(playerNumber, 1.25f);
-
+                    // Healing 16
+                    IncreaseDroneHealing(playerNumber, 1.2f);
                 }
                 else if (level == 4)
                 {
-                    IncreaseDroneHealing(playerNumber, 1.50f);
-
+                    // Healing 18
+                    // Speed 1.2
+                    IncreaseDroneHealing(playerNumber, 1.1f);
+                    IncreaseHealingDroneSpeed(playerNumber, 1.2f);
                 }
                 else if (level == 5)
                 {
-                    IncreaseDroneHealing(playerNumber, 1.25f);
+                    // Healing 20
+                    // Healing Rate 9.4s
+                    IncreaseDroneHealing(playerNumber, 1.1f);
                     IncreaseDroneHealingRate(playerNumber, 1.30f);
                 }
 
@@ -268,32 +288,45 @@ public class UpgradeManager : MonoBehaviour
 
                 if (level == 0)
                 {
+                    // Explosion Damage 20
+                    // Fire Rate 0.5
+                    // Speed 0.5
                     SpawnUpgrade(explosiveDrone, FindPlayer(playerNumber).transform, playerNumber);
                 }
                 else if (level == 1)
                 {
+                    // Explosion Damage 30
                     IncreaseDroneExplosionDamage(playerNumber, 1.50f);
                 }
                 else if (level == 2)
                 {
-                    IncreaseExposionDroneFireRate(playerNumber, 1.10f);
+                    // Explosion Damage 38
+                    // Fire Rate 0.6
                     IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    IncreaseExposionDroneFireRate(playerNumber, 1.2f);
 
                 }
                 else if (level == 3)
                 {
-                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    // Explosion Damage 42
+                    // Speed 0.62
+
+                    IncreaseDroneExplosionDamage(playerNumber, 1.1f);
                     IncreaseExposionDroneSpeed(playerNumber, 1.25f);
 
                 }
                 else if (level == 4)
                 {
-                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
-
+                    // Explosion Damage 53
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
                 }
                 else if (level == 5)
                 {
-                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    // Explosion Damage 80
+                    // Fire Rate 0.78
+                    // Speed 0.75
+
+                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
                     IncreaseExposionDroneFireRate(playerNumber, 1.30f);
                     IncreaseExposionDroneSpeed(playerNumber, 1.25f);
                 }
@@ -322,23 +355,32 @@ public class UpgradeManager : MonoBehaviour
 
     public void OpenShop()
     {
-        currentUpgrades = GetRandomUpgrades(3);
+        currentUpgrades1 = GetRandomUpgrades(3);
         player1Selected = false;
-        player1Items = InitializeShop(player1ShopContent, currentUpgrades, 1);
+        player1Items = InitializeShop(player1ShopContent, currentUpgrades1, 1);
         player1Index = 0;
         UpdateSelectorPosition(player1Selector, player1Items, player1Index);
 
-        currentUpgrades = GetRandomUpgrades(3);
+        currentUpgrades2 = GetRandomUpgrades(3);
         player2Selected = false;
-        player2Items = InitializeShop(player2ShopContent, currentUpgrades, 2);
+        player2Items = InitializeShop(player2ShopContent, currentUpgrades2, 2);
         player2Index = 0;
         UpdateSelectorPosition(player2Selector, player2Items, player2Index);
 
         upgradeScreen.SetActive(true);
         player1ShopUI.SetActive(true);
         player2ShopUI.SetActive(true);
+        StartCoroutine(OpenDelay());
+    }
+
+    private IEnumerator OpenDelay()
+    {
+        player1ShopUI.GetComponent<Animator>().SetTrigger("OpenShop");
+        player2ShopUI.GetComponent<Animator>().SetTrigger("OpenShop");
+        yield return new WaitForSeconds(0.5f);
         shopOpen = true;
     }
+
 
     private GameObject[] InitializeShop(Transform shopContent, Upgrade[] upgradesToDisplay, int playerNumber)
     {
@@ -383,49 +425,54 @@ public class UpgradeManager : MonoBehaviour
         switch (upgrade.name)
         {
             case "Damage":
-                return $"Increase your damage by {30 * (upgradeLevel + 1)}%.";
+                return $"Level {upgradeLevel + 1}: Damage + {30 * (upgradeLevel + 1)}%";
+
             case "Fire Rate":
-                return $"Increase your fire rate by {20 * (upgradeLevel + 1)}%.";
+                return $"Level {upgradeLevel + 1}: Fire Rate + {20 * (upgradeLevel + 1)}%";
+
             case "Move Speed":
-                return $"Increase your movement speed by {10 * (upgradeLevel + 1)}%.";
+                return $"Level {upgradeLevel + 1}: Move Speed + {10 * (upgradeLevel + 1)}%";
+
             case "Shooting Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Summon a shooting drone to help in battle.";
-                    case 1: return "Increase drone damage by 50%.";
-                    case 2: return "Increase drone fire rate by 30% and damage by 50%.";
-                    case 3: return "Increase drone fire rate by 30%.";
-                    case 4: return "Increase drone damage by 20%.";
-                    case 5: return "Increase drone fire rate by 20% and damage by 20%.";
-                    default: return "No upgrade available.";
+                    case 0: return "Level 1: Unlock - Summon a shooting drone";
+                    case 1: return "Level 2: Damage + 50%";
+                    case 2: return "Level 3: Damage + 50%, Fire Rate + 30%";
+                    case 3: return "Level 4: Fire Rate + 50%";
+                    case 4: return "Level 5: Damage + 30%";
+                    case 5: return "Level 6: Damage + 20%, Fire Rate + 50%";
+                    default: return "No upgrade available";
                 }
+
             case "Healing Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Summon a healing drone to assist in battle by healing players.";
-                    case 1: return "Increase the drone's healing rate by 10%";
-                    case 2: return "Increase the drone's healing rate by 10% and healing amount by 25%.";
-                    case 3: return "Increase the drone's healing rate by 10%.";
-                    case 4: return "Increase the drone's healing amount by 50%.";
-                    case 5: return "Increase the drone's healing rate by 25% and healing amount by 30%.";
-                    default:
-                        return "No upgrade available.";
+                    case 0: return "Level 1: Unlock - Summon a healing drone";
+                    case 1: return "Level 2: Healing Rate + 10%";
+                    case 2: return "Level 3: Healing + 30%, Healing Rate + 20%";
+                    case 3: return "Level 4: Healing + 20%";
+                    case 4: return "Level 5: Healing + 10, Move Speed + 20%";
+                    case 5: return "Level 6: Healing Rate + 25%, Healing Amount + 30%";
+                    default: return "No upgrade available.";
                 }
+
             case "Explosive Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Summon a healing drone to assist in battle by healing players.";
-                    case 1: return "Increase the drone's healing rate by 10%";
-                    case 2: return "Increase the drone's healing rate by 10% and healing amount by 25%.";
-                    case 3: return "Increase the drone's healing rate by 10%.";
-                    case 4: return "Increase the drone's healing amount by 50%.";
-                    case 5: return "Increase the drone's healing rate by 25% and healing amount by 30%.";
-                    default:
-                        return "No upgrade available.";
+                    case 0: return "Level 1: Unlock - Summon an explosive drone";
+                    case 1: return "Level 2: Explosion Damage + 50%";
+                    case 2: return "Level 3: Explosion Damage + 25%, Fire Rate + 20%";
+                    case 3: return "Level 4: Explosion Damage + 10%, Speed + 25%";
+                    case 4: return "Level 5: Explosion Damage + 25%";
+                    case 5: return "Level 6: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
+                    default: return "No upgrade available.";
                 }
+
             default:
                 return "No description available.";
         }
+
     }
 
 
@@ -438,9 +485,16 @@ public class UpgradeManager : MonoBehaviour
     {
         if (player1Selected && player2Selected)
         {
-            upgradeScreen.SetActive(false);
-            shopOpen = false;
+            StartCoroutine(CloseDelay());
         }
+    }
+
+    private IEnumerator CloseDelay()
+    {
+        
+        yield return new WaitForSeconds(0.3f);
+        upgradeScreen.SetActive(false);
+        shopOpen = false;
     }
 
     private GameObject FindPlayer(int playerNumber)
@@ -519,7 +573,6 @@ public class UpgradeManager : MonoBehaviour
             drone.healingAmount = Mathf.RoundToInt(drone.healingAmount * percentage);
         }
     }
-
     private void IncreaseDroneHealingRate(int playerNumber, float percentage)
     {
         HealingDrone drone = FindItemInInventory<HealingDrone>(playerNumber);
@@ -527,6 +580,18 @@ public class UpgradeManager : MonoBehaviour
         if (drone != null)
         {
             drone.healingInterval = (drone.healingInterval / percentage);
+        }
+
+    }
+
+    private void IncreaseHealingDroneSpeed(int playerNumber, float percentage)
+    {
+        HealingDrone drone = FindItemInInventory<HealingDrone>(playerNumber);
+
+        if (drone != null)
+        {
+            DroneBasic basicDrone = drone.gameObject.GetComponent<DroneBasic>();
+            basicDrone.followSpeed = Mathf.RoundToInt(basicDrone.followSpeed * percentage);
         }
 
     }
@@ -550,7 +615,7 @@ public class UpgradeManager : MonoBehaviour
 
         if (drone != null)
         {
-            drone.fireRate = (drone.fireRate / percentage);
+            drone.fireRate = (drone.fireRate * percentage);
         }
 
     }

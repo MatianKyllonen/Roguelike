@@ -128,7 +128,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 6
+  m_SortingOrder: 7
   m_Sprite: {fileID: -62397200, guid: 74ded7fa210993e4e82fd14811278edd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -295,11 +295,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
-  maxHealth: 600
+  maxHealth: 850
   damage: 30
   flashDuration: 0.1
   spawnedObject: {fileID: 0}
-  orb: {fileID: 2503092565083826754, guid: a7450f883c514ec459705e07cd64217b, type: 3}
+  orb: {fileID: 0}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
 --- !u!61 &1623868016803252841
@@ -361,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 7
   minWaveToSpawn: 5
+  maxWaveToSpawn: 0
 --- !u!50 &5373056499545885458
 Rigidbody2D:
   serializedVersion: 4

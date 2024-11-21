@@ -415,7 +415,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 4
-  minWaveToSpawn: 3
+  minWaveToSpawn: 4
+  maxWaveToSpawn: 0
 --- !u!1 &9033634016425224092
 GameObject:
   m_ObjectHideFlags: 0

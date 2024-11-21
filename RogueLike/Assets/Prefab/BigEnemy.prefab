@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.7
-  maxHealth: 250
+  maxHealth: 300
   damage: 14
   flashDuration: 0.1
   spawnedObject: {fileID: 4230440292960051774, guid: 2082c4b1aa1a6ef48a774d4ab9f0ea0a, type: 3}
@@ -360,7 +360,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 7
-  minWaveToSpawn: 5
+  minWaveToSpawn: 8
+  maxWaveToSpawn: 0
 --- !u!50 &8168847255472010660
 Rigidbody2D:
   serializedVersion: 4

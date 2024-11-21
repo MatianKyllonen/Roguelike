@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public float shootingRange = 10f;          
+    public float shootingRange = 10f;
     public float fireRate = 1f;
     public float fireRateMultiplier = 1;
 
@@ -13,12 +13,12 @@ public class Gun : MonoBehaviour
     public float damage = 50;
     public float damageMultiplier = 1;
 
-    public GameObject bulletPrefab;            // The bullet or projectile to shoot
-    public Transform gunMuzzle;                // The point from where the bullet will be shot
-    public LayerMask enemyLayer;               // Layer that represents enemies (set this in the inspector)
+    public GameObject bulletPrefab;
+    public Transform gunMuzzle;
+    public LayerMask enemyLayer;
 
     public SpriteRenderer gunSprite;
-    private float nextFireTime = 0f;           // Time to control firing rate
+    private float nextFireTime = 0f;
     private AudioSource audioSoure;
     public AudioClip shotSound;
 
@@ -26,26 +26,22 @@ public class Gun : MonoBehaviour
     {
         audioSoure = GetComponent<AudioSource>();
     }
-    void Update()
-    {       
 
+    void Update()
+    {
         if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
         {
             return;
         }
 
-        // If it's time to fire and the player presses the fire button
         if (Time.time > nextFireTime)
         {
-            // Find the nearest enemy within range
             GameObject nearestEnemy = FindNearestEnemy();
 
             if (nearestEnemy != null)
             {
-                // Rotate the gun towards the nearest enemy
                 RotateGunTowardsEnemy(nearestEnemy);
 
-                // Shoot at the nearest enemy
                 Shoot(nearestEnemy);
             }
         }
@@ -53,7 +49,6 @@ public class Gun : MonoBehaviour
 
     GameObject FindNearestEnemy()
     {
-        // Find all enemies in range using a collider overlap or Physics checks
         Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(transform.position, shootingRange, enemyLayer);
 
         GameObject nearestEnemy = null;
@@ -75,7 +70,6 @@ public class Gun : MonoBehaviour
 
     void Shoot(GameObject target)
     {
-        // Create the bullet instance
         GameObject bullet = Instantiate(bulletPrefab, gunMuzzle.position, Quaternion.identity);
         bullet.GetComponent<Bullet>().damage = Mathf.RoundToInt(damage * damageMultiplier);
 
@@ -83,29 +77,34 @@ public class Gun : MonoBehaviour
 
         audioSoure.PlayOneShot(shotSound, 0.2f);
 
-        // Calculate direction towards the target
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
 
-        // Set bullet velocity or direction (depending on the method you're using)
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.velocity = direction * bulletForce;  // Bullet speed (adjust as needed)
+            rb.velocity = direction * bulletForce;
         }
 
-        // Update the next fire time based on fire rate
         nextFireTime = Time.time + 1f / (fireRate * fireRateMultiplier);
     }
 
-    // Rotates the gun towards the nearest enemy
     void RotateGunTowardsEnemy(GameObject target)
     {
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
 
-        // Calculate the angle between the gun's current position and the target's position
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Rotate the gun to face the target direction
         gunSprite.gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        gunSprite.transform.position = transform.position + (Vector3)(Quaternion.Euler(0, 0, angle) * Vector2.right * 0.5f);
+        gunSprite.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        if (direction.x < 0)
+        {
+            gunSprite.transform.localScale = new Vector3(1, -1, 1);  
+        }
+        else
+        {
+            gunSprite.transform.localScale = new Vector3(1, 1, 1);  
+        }
     }
 }

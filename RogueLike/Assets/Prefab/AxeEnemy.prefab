@@ -347,7 +347,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 6
-  minWaveToSpawn: 4
+  minWaveToSpawn: 6
+  maxWaveToSpawn: 0
 --- !u!50 &1217441533142711770
 Rigidbody2D:
   serializedVersion: 4

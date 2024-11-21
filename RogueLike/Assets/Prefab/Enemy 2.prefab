@@ -50,9 +50,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26da4019a2372fb4389fd27b8c98031f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2.2
-  maxHealth: 200
-  damage: 13
+  moveSpeed: 2.4
+  maxHealth: 350
+  damage: 17
   flashDuration: 0.1
   spawnedObject: {fileID: 0}
   orb: {fileID: 2503092565083826754, guid: cb6d40377c9fd9a419f2e6d56fbc9035, type: 3}
@@ -71,7 +71,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 2
-  minWaveToSpawn: 5
+  minWaveToSpawn: 10
+  maxWaveToSpawn: 0
 --- !u!61 &3932190996980949031
 BoxCollider2D:
   m_ObjectHideFlags: 0

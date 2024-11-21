@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3ba385087759304bb251147c9aeab6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healingRange: 5
+  healingRange: 4
   healingAmount: 10
   healingInterval: 15
   healAmountMultiplier: 1

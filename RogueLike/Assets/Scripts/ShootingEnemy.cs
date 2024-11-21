@@ -5,9 +5,11 @@ using UnityEngine;
 public class ShootingEnemy : MonoBehaviour
 {
     public float shootingRange = 10f;           // Range at which the enemy will shoot
-    public float fireRate = 1f;                 // Time between shots
+    public float fireRate = 1f;
+    public float projectileSpeed = 7f;
     public GameObject projectilePrefab;         // The projectile prefab to shoot
     private float nextFireTime = 0f;            // Time at which the enemy is allowed to fire
+    
 
     private Transform targetPlayer;             // The nearest player
     private SpriteRenderer spriteRenderer;      // For flipping the sprite based on player position
@@ -80,7 +82,7 @@ public class ShootingEnemy : MonoBehaviour
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.velocity = direction * 7f;  // Adjust projectile speed as needed
+                rb.velocity = direction * projectileSpeed;  // Adjust projectile speed as needed
             }
 
             // Make the projectile face the player by rotating it
