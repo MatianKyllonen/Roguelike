@@ -12,6 +12,5 @@ public class FadeOut : MonoBehaviour
     public void Bust()
     {
         GetComponent<Animator>().SetTrigger("FadeOut");
-        Destroy(gameObject, 2f);
     }
 }

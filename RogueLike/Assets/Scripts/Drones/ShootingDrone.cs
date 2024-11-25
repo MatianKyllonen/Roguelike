@@ -9,11 +9,18 @@ public class ShootingDrone : MonoBehaviour
     public float bulletForce = 20f;
     public float damage = 25f;
 
-    public GameObject bulletPrefab;           
-    public Transform gunMuzzle;               
-    public LayerMask enemyLayer;              
+    public GameObject bulletPrefab;
+    public Transform gunMuzzle;
+    public LayerMask enemyLayer;
 
     private float nextFireTime = 0f;
+    public int playerNumber;
+
+    private void Start()
+    {
+        // Get the player number from the drone's target
+        playerNumber = GetComponent<DroneBasic>().target.GetComponent<Movement>().playerNumber;
+    }
 
     void Update()
     {
@@ -62,6 +69,7 @@ public class ShootingDrone : MonoBehaviour
         if (bulletScript != null)
         {
             bulletScript.damage = Mathf.RoundToInt(damage);
+            bulletScript.playerNumber = playerNumber; 
         }
 
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
@@ -71,6 +79,7 @@ public class ShootingDrone : MonoBehaviour
         {
             rb.velocity = direction * bulletForce;
         }
+
         Destroy(bullet, 2f);
 
         nextFireTime = Time.time + 1f / (fireRate * fireRateMultiplier);

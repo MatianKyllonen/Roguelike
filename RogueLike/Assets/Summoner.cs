@@ -91,7 +91,7 @@ public class Summoner : MonoBehaviour
             animator.SetTrigger("Summon");
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.8f);
 
         Vector3 summonPosition = transform.position;
         if (targetPlayer != null)
@@ -106,9 +106,6 @@ public class Summoner : MonoBehaviour
 
         yield return new WaitForSeconds(0.8f);
 
-
-
- 
 
         // Spawn the enemy
         if (enemyPrefab != null)

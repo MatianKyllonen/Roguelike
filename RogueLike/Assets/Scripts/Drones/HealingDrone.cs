@@ -11,7 +11,12 @@ public class HealingDrone : MonoBehaviour
 
     private float nextHealingTime = 0f; // Timer for when to heal next
     public Slider healingSlider;
+    public int playerNumber;
 
+    private void Start()
+    {
+        playerNumber = GetComponent<DroneBasic>().target.GetComponent<Movement>().playerNumber;
+    }
     void Update()
     {
         if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
@@ -37,6 +42,7 @@ public class HealingDrone : MonoBehaviour
 
         foreach (Collider2D playerCollider in playersInRange)
         {
+            Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 0, healingAmount);
             // Check if the object is a player (you can adjust this check based on how your game identifies the player)
             Movement player = playerCollider.GetComponent<Movement>();
             if (player != null && !player.knocked)

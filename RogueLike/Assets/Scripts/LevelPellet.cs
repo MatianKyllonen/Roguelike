@@ -16,6 +16,8 @@ public class LevelPellet : MonoBehaviour
 
     void Start()
     {
+
+        Destroy(gameObject, 90f);
         gm = Gamemanager.instance;
 
         // Find players by tag and add their transforms to the list

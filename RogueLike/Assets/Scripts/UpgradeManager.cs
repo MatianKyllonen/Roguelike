@@ -36,7 +36,7 @@ public class UpgradeManager : MonoBehaviour
     private GameObject[] player1Items;
     private GameObject[] player2Items;
 
-    private float inputCooldown = 0.2f;
+    private float inputCooldown = 0.3f;
     private float player1CooldownTimer = 0;
     private float player2CooldownTimer = 0;
 
@@ -44,6 +44,7 @@ public class UpgradeManager : MonoBehaviour
     private bool player2Selected = false;
 
     public bool shopOpen = false;
+    private bool canSelect;
 
     private Dictionary<int, Dictionary<string, int>> playerUpgradeLevels;
 
@@ -120,7 +121,7 @@ public class UpgradeManager : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Submit1") && !player1Selected)
+        if (Input.GetButtonDown("Submit1") && !player1Selected && canSelect)
         {
             ApplyUpgrade(currentUpgrades1[player1Index], 1);
             player1Selected = true;
@@ -129,7 +130,7 @@ public class UpgradeManager : MonoBehaviour
             CheckBothPlayersSelected();
         }
 
-        if (Input.GetButtonDown("Submit2") && !player2Selected)
+        if (Input.GetButtonDown("Submit2") && !player2Selected && canSelect)
         {          
             ApplyUpgrade(currentUpgrades2[player2Index], 2);
             player2Selected = true;
@@ -151,25 +152,49 @@ public class UpgradeManager : MonoBehaviour
         selector.transform.position = new Vector2(items[index].transform.position.x - 150, items[index].transform.position.y);
     }
 
-    private Upgrade[] GetRandomUpgrades(int count)
+    private Upgrade[] GetRandomUpgrades(int count, int playerNumber)
     {
-        Upgrade[] randomUpgrades = new Upgrade[count];
-        System.Collections.Generic.List<int> chosenIndices = new System.Collections.Generic.List<int>();
-
-        for (int i = 0; i < count; i++)
+        // Filter upgrades that the player hasn't maxed out
+        List<Upgrade> availableUpgrades = new List<Upgrade>();
+        foreach (var upgrade in upgrades)
         {
-            int randomIndex;
-            do
+            if (playerUpgradeLevels[playerNumber][upgrade.name] < upgrade.maxlevel)
             {
-                randomIndex = Random.Range(0, upgrades.Length);
-            } while (chosenIndices.Contains(randomIndex));
+                availableUpgrades.Add(upgrade);
+            }
+        }
 
-            chosenIndices.Add(randomIndex);
-            randomUpgrades[i] = upgrades[randomIndex];
+        // If no upgrades are available, return an empty array
+        if (availableUpgrades.Count == 0)
+        {
+            Debug.Log($"Player {playerNumber} has no available upgrades.");
+            return new Upgrade[0];
+        }
+
+        // Shuffle the available upgrades list
+        for (int i = 0; i < availableUpgrades.Count; i++)
+        {
+            int randomIndex = Random.Range(i, availableUpgrades.Count);
+            // Swap current element with the randomly chosen element
+            var temp = availableUpgrades[i];
+            availableUpgrades[i] = availableUpgrades[randomIndex];
+            availableUpgrades[randomIndex] = temp;
+        }
+
+        // Select the first 'count' upgrades
+        int selectedCount = Mathf.Min(count, availableUpgrades.Count);
+        Upgrade[] randomUpgrades = new Upgrade[selectedCount];
+        for (int i = 0; i < selectedCount; i++)
+        {
+            randomUpgrades[i] = availableUpgrades[i];
         }
 
         return randomUpgrades;
     }
+
+
+
+
 
     public void ApplyUpgrade(Upgrade upgrade, int playerNumber)
     {
@@ -340,53 +365,73 @@ public class UpgradeManager : MonoBehaviour
         playerUpgradeLevels[playerNumber][upgrade.name]++;
     }
 
-    private Upgrade GetNewUpgradeNotMaxed(int playerNumber, Upgrade currentUpgrade)
-    {
-        Upgrade newUpgrade;
-        do
-        {
-            newUpgrade = upgrades[Random.Range(0, upgrades.Length)];
-        }
-        while (newUpgrade.name == currentUpgrade.name || playerUpgradeLevels[playerNumber][newUpgrade.name] >= newUpgrade.maxlevel);
-
-        return newUpgrade;
-    }
 
 
     public void OpenShop()
     {
-        currentUpgrades1 = GetRandomUpgrades(3);
-        player1Selected = false;
-        player1Items = InitializeShop(player1ShopContent, currentUpgrades1, 1);
-        player1Index = 0;
-        UpdateSelectorPosition(player1Selector, player1Items, player1Index);
+        currentUpgrades1 = GetRandomUpgrades(3, 1);
+        if (currentUpgrades1.Length > 0)
+        {
+            player1Selected = false;
+            player1Items = InitializeShop(player1ShopContent, currentUpgrades1, 1);
+            player1Index = 0;
+            UpdateSelectorPosition(player1Selector, player1Items, player1Index);
+            player1ShopUI.SetActive(true);
+        }
+        else
+        {
+            player1ShopUI.SetActive(false);
+            Debug.Log("Player 1 has no upgrades to choose from.");
+        }
 
-        currentUpgrades2 = GetRandomUpgrades(3);
-        player2Selected = false;
-        player2Items = InitializeShop(player2ShopContent, currentUpgrades2, 2);
-        player2Index = 0;
-        UpdateSelectorPosition(player2Selector, player2Items, player2Index);
+        currentUpgrades2 = GetRandomUpgrades(3, 2);
+        if (currentUpgrades2.Length > 0)
+        {
+            player2Selected = false;
+            player2Items = InitializeShop(player2ShopContent, currentUpgrades2, 2);
+            player2Index = 0;
+            UpdateSelectorPosition(player2Selector, player2Items, player2Index);
+            player2ShopUI.SetActive(true);
+        }
+        else
+        {
+            player2ShopUI.SetActive(false);
+            Debug.Log("Player 2 has no upgrades to choose from.");
+        }
 
-        upgradeScreen.SetActive(true);
-        player1ShopUI.SetActive(true);
-        player2ShopUI.SetActive(true);
-        StartCoroutine(OpenDelay());
+        upgradeScreen.SetActive(player1ShopUI.activeSelf || player2ShopUI.activeSelf);
+        shopOpen = player1ShopUI.activeSelf || player2ShopUI.activeSelf;
+
+        if (shopOpen)
+        {
+            StartCoroutine(OpenDelay());
+            canSelect = false;
+        }
     }
+
+
 
     private IEnumerator OpenDelay()
     {
         player1ShopUI.GetComponent<Animator>().SetTrigger("OpenShop");
         player2ShopUI.GetComponent<Animator>().SetTrigger("OpenShop");
         yield return new WaitForSeconds(0.5f);
-        shopOpen = true;
+        canSelect = true;
     }
 
 
     private GameObject[] InitializeShop(Transform shopContent, Upgrade[] upgradesToDisplay, int playerNumber)
     {
+        // Clear previous items
         foreach (Transform child in shopContent)
         {
             Destroy(child.gameObject);
+        }
+
+        // If no upgrades to display, return an empty array
+        if (upgradesToDisplay.Length == 0)
+        {
+            return new GameObject[0];
         }
 
         GameObject[] items = new GameObject[upgradesToDisplay.Length];
@@ -416,6 +461,7 @@ public class UpgradeManager : MonoBehaviour
         }
         return items;
     }
+
 
 
     private string GetUpgradeDescription(Upgrade upgrade, int playerNumber)
@@ -591,7 +637,7 @@ public class UpgradeManager : MonoBehaviour
         if (drone != null)
         {
             DroneBasic basicDrone = drone.gameObject.GetComponent<DroneBasic>();
-            basicDrone.followSpeed = Mathf.RoundToInt(basicDrone.followSpeed * percentage);
+            basicDrone.followSpeed = basicDrone.followSpeed * percentage;
         }
 
     }
@@ -627,7 +673,7 @@ public class UpgradeManager : MonoBehaviour
         if (drone != null)
         {
             DroneBasic basicDrone = drone.gameObject.GetComponent<DroneBasic>();
-            basicDrone.followSpeed = Mathf.RoundToInt(basicDrone.followSpeed * percentage);
+            basicDrone.followSpeed = basicDrone.followSpeed * percentage;
         }
 
     }

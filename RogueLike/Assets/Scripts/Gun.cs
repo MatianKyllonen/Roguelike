@@ -19,12 +19,14 @@ public class Gun : MonoBehaviour
 
     public SpriteRenderer gunSprite;
     private float nextFireTime = 0f;
-    private AudioSource audioSoure;
+    private AudioSource audioSource;
     public AudioClip shotSound;
+    public int playerNumber;
 
     private void Start()
     {
-        audioSoure = GetComponent<AudioSource>();
+        playerNumber = GetComponent<Movement>().playerNumber;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -71,11 +73,14 @@ public class Gun : MonoBehaviour
     void Shoot(GameObject target)
     {
         GameObject bullet = Instantiate(bulletPrefab, gunMuzzle.position, Quaternion.identity);
-        bullet.GetComponent<Bullet>().damage = Mathf.RoundToInt(damage * damageMultiplier);
+
+        Bullet bulletComponent = bullet.GetComponent<Bullet>();
+        bulletComponent.damage = Mathf.RoundToInt(damage * damageMultiplier);
+        bulletComponent.playerNumber = playerNumber; // Assign player number to bullet
 
         Destroy(bullet, 2f);
 
-        audioSoure.PlayOneShot(shotSound, 0.2f);
+        audioSource.PlayOneShot(shotSound, 0.2f);
 
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
 
@@ -87,6 +92,7 @@ public class Gun : MonoBehaviour
 
         nextFireTime = Time.time + 1f / (fireRate * fireRateMultiplier);
     }
+
 
     void RotateGunTowardsEnemy(GameObject target)
     {
@@ -100,11 +106,11 @@ public class Gun : MonoBehaviour
 
         if (direction.x < 0)
         {
-            gunSprite.transform.localScale = new Vector3(1, -1, 1);  
+            gunSprite.transform.localScale = new Vector3(1, -1, 1);
         }
         else
         {
-            gunSprite.transform.localScale = new Vector3(1, 1, 1);  
+            gunSprite.transform.localScale = new Vector3(1, 1, 1);
         }
     }
 }

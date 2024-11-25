@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,6 +49,16 @@ public class Movement : MonoBehaviour
     public float flashDuration = 0.1f;    // Duration of the flash
     private float flashTimer = 0f;
 
+    private float invincibilityTimer = 0f;
+    private bool invincibility = false;
+
+    //Sploog
+    public bool splooged;
+    public float sploogedDuration = 5f; // Duration for being splooged
+    private float sploogedTimer = 0f;   // Timer to track splooged state
+    public float sploogedSpeedMultiplier = 0.5f; // Speed reduction when splooged
+    public GameObject sploogeSprite;
+
     private void Start()
     {
         audioSoure = GetComponent<AudioSource>();
@@ -66,16 +75,30 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-
+        // Flash timer for visual effects
         if (flashTimer > 0f)
         {
             flashTimer -= Time.deltaTime;
             if (flashTimer <= 0f)
             {
-                spriteRenderer.color = originalColor;  // Reset color after the flash
+                spriteRenderer.color = originalColor;
             }
         }
 
+        // Handle Splooged State
+        if (splooged)
+        {
+            sploogedTimer -= Time.deltaTime;
+            if (sploogedTimer <= 0f)
+            {
+                sploogeSprite.SetActive(false);
+                splooged = false; // Automatically remove splooged state
+                moveSpeedMultiplier = 1f; // Reset move speed multiplier
+                dashBarUI.SetActive(true); // Re-enable dash UI
+            }
+        }
+
+        // Block movement and dashing if the shop is open
         if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
         {
             rb.velocity = Vector2.zero;
@@ -84,6 +107,17 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        // Handle invincibility
+        if (invincibilityTimer > 0f)
+        {
+            invincibilityTimer -= Time.deltaTime;
+            if (invincibilityTimer <= 0f)
+            {
+                invincibility = false;
+            }
+        }
+
+        // Handle knocked state
         if (knocked)
         {
             if (health < 0)
@@ -99,11 +133,12 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        // Get movement input
         float horizontalMove = Input.GetAxisRaw("Horizontal" + playerNumber);
         float verticalMove = Input.GetAxisRaw("Vertical" + playerNumber);
-
         Vector2 movement = new Vector2(horizontalMove, verticalMove).normalized;
 
+        // Apply movement
         if (!dashing)
         {
             rb.velocity = movement * (moveSpeed * moveSpeedMultiplier);
@@ -113,34 +148,56 @@ public class Movement : MonoBehaviour
             rb.velocity = movement * (dashSpeed * moveSpeedMultiplier);
         }
 
+        // Handle sprite flipping
         if (horizontalMove != 0)
         {
             spriteRenderer.flipX = horizontalMove < 0;
         }
 
+        // Update animator states
         animator.SetBool("isMoving", movement.magnitude > 0 && !dashing);
         animator.SetBool("isDashing", dashing);
 
+        // Handle dash cooldown
         if (dashCooldownTimer > 0)
         {
             dashSlider.value = dashCooldownTimer / dashCooldown;
             dashCooldownTimer -= Time.deltaTime;
         }
         else
+        {
             dashBarUI.SetActive(false);
+        }
 
-        if ((Input.GetButtonDown("Submit" + playerNumber)) && dashCooldownTimer <= 0)
+        // Handle dash input
+        if ((Input.GetButtonDown("Submit" + playerNumber)) && dashCooldownTimer <= 0 && !splooged)
         {
             Dash();
         }
     }
 
+    // Apply the splooged state
+    public void ApplySploog()
+    {
+        if (splooged)
+            return;
+
+        sploogeSprite.SetActive(true);
+        splooged = true;
+        sploogedTimer = sploogedDuration;    // Set the duration
+        moveSpeedMultiplier = sploogedSpeedMultiplier; // Reduce speed
+        dashBarUI.SetActive(false);         // Disable dash UI
+        rb.velocity = Vector2.zero;         // Stop movement immediately
+    }
+
+    // Dash method remains unchanged
     void Dash()
     {
         audioSoure.PlayOneShot(dashSound, 0.2f);
         dashing = true;
         StartCoroutine(ResetVelocityAfterDash(dashTime));
     }
+
 
     IEnumerator ResetVelocityAfterDash(float dashDuration)
     {
@@ -153,8 +210,8 @@ public class Movement : MonoBehaviour
 
     private void FlashRed()
     {
-        spriteRenderer.color = Color.red; 
-        flashTimer = flashDuration;        
+        spriteRenderer.color = Color.red;
+        flashTimer = flashDuration;
     }
 
 
@@ -166,6 +223,14 @@ public class Movement : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (invincibility)
+            return;
+
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        {
+            return;
+        }
+
         health -= damage;
         FlashRed();
         CalculateHealth();
@@ -174,6 +239,9 @@ public class Movement : MonoBehaviour
         {
             Die();
         }
+
+        invincibility = true;
+        invincibilityTimer = 0.1f;
     }
 
     public void Heal(float healingAmount)
@@ -187,8 +255,9 @@ public class Movement : MonoBehaviour
         CalculateHealth();
     }
 
-        void Die()
+    void Die()
     {
+        GetComponent<Gun>().gunSprite.gameObject.SetActive(false);
         GetComponent<BoxCollider2D>().enabled = false;
         spriteRenderer.sprite = knockdownSprite;
         knocked = true;
@@ -217,6 +286,7 @@ public class Movement : MonoBehaviour
 
             if (reviveCounter >= reviveTime)
             {
+                Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 1, 0);
                 Revive();
             }
         }
@@ -230,6 +300,7 @@ public class Movement : MonoBehaviour
 
     void Revive()
     {
+        GetComponent<Gun>().gunSprite.gameObject.SetActive(true);
         GetComponent<BoxCollider2D>().enabled = true;
         animator.SetBool("isKnocked", false);
         shooting.enabled = true;
