@@ -46,6 +46,11 @@ public class UpgradeManager : MonoBehaviour
     public bool shopOpen = false;
     private bool canSelect;
 
+    private AudioSource audioSource;
+    public AudioClip selectSFX;
+    public AudioClip navigateSFX;
+
+
     private Dictionary<int, Dictionary<string, int>> playerUpgradeLevels;
 
 
@@ -75,6 +80,8 @@ public class UpgradeManager : MonoBehaviour
             playerUpgradeLevels[1][upgrade.name] = 0;
             playerUpgradeLevels[2][upgrade.name] = 0;
         }
+
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -95,12 +102,14 @@ public class UpgradeManager : MonoBehaviour
                 player1Index = (player1Index - 1 + currentUpgrades1.Length) % currentUpgrades1.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
+                audioSource.PlayOneShot(navigateSFX, 0.5f);
             }
             else if (player1Input < -0.1f)
             {
                 player1Index = (player1Index + 1) % currentUpgrades1.Length;
                 UpdateSelectorPosition(player1Selector, player1Items, player1Index);
                 player1CooldownTimer = inputCooldown;
+                audioSource.PlayOneShot(navigateSFX, 0.5f);
             }
         }
 
@@ -112,12 +121,15 @@ public class UpgradeManager : MonoBehaviour
                 player2Index = (player2Index - 1 + currentUpgrades2.Length) % currentUpgrades2.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
+                audioSource.PlayOneShot(navigateSFX, 0.5f);
             }
             else if (player2Input < -0.1f)
             {
                 player2Index = (player2Index + 1) % currentUpgrades2.Length;
                 UpdateSelectorPosition(player2Selector, player2Items, player2Index);
                 player2CooldownTimer = inputCooldown;
+                audioSource.PlayOneShot(navigateSFX, 0.5f);
+
             }
         }
 
@@ -128,6 +140,7 @@ public class UpgradeManager : MonoBehaviour
             player1ShopUI.GetComponent<Animator>().SetTrigger("CloseShop");
             StartCoroutine(CloseShopDelay(player1ShopUI));
             CheckBothPlayersSelected();
+            audioSource.PlayOneShot(selectSFX, 0.2f);
         }
 
         if (Input.GetButtonDown("Submit2") && !player2Selected && canSelect)
@@ -137,6 +150,8 @@ public class UpgradeManager : MonoBehaviour
             player2ShopUI.GetComponent<Animator>().SetTrigger("CloseShop");
             StartCoroutine(CloseShopDelay(player2ShopUI));
             CheckBothPlayersSelected();
+            audioSource.PlayOneShot(selectSFX, 0.2f);
+
         }
 
     }
@@ -568,7 +583,7 @@ public class UpgradeManager : MonoBehaviour
             return;
         }
 
-        for (int i = 1; i <= 5; i++)
+        for (int i = 0; i <= 5; i++)
         {
             Transform levelTransform = root.Find($"Lvl{i}");
             if (levelTransform != null)

@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 50
+  playerNumber: 0
 --- !u!96 &19443344293941592
 TrailRenderer:
   serializedVersion: 3

@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d05483f958f284d94cea86c46411ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 5
+  weight: 4
   minWaveToSpawn: 9
   maxWaveToSpawn: 0
 --- !u!114 &6162888903112096227

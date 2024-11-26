@@ -8,6 +8,7 @@ public class SplitProjectile : MonoBehaviour
     public float splitDelay = 1f;            // Time before the projectile splits
     public float subProjectileSpeed = 5f;    // Speed of the smaller projectiles
     public float splitAngle = 45f;           // Angle between each subprojectile
+    public int splitProjectiles = 8;
 
     private bool hasSplit = false;
 
@@ -27,7 +28,7 @@ public class SplitProjectile : MonoBehaviour
         // The center of the main projectile
         Vector3 splitCenter = transform.position;  // This is the point from which the subprojectiles will spawn
 
-        for (int i = 0; i < 8; i++) // Spawn 8 projectiles
+        for (int i = 0; i < splitProjectiles; i++) // Spawn 8 projectiles
         {
             // Calculate the angle for each subprojectile
             float angle = i * splitAngle - (2 * splitAngle); // Evenly distribute around the main direction
