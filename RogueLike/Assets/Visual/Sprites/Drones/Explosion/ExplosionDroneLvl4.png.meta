@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b41266b48cea65a458675a395880c424
+guid: 796caf39c2633064c9e5a2b70ce06de7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Drone_0
+      name: ExplosionDroneLvl4_0
       rect:
         serializedVersion: 2
         x: 0
@@ -118,20 +118,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7e5afc753b756fc4c969c7cafe0194b2
-      internalID: -215136501
+      spriteID: f7d52edc2eb5b2343a0c65359fad6e98
+      internalID: 57666335
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_1
+      name: ExplosionDroneLvl4_1
       rect:
         serializedVersion: 2
         x: 64
@@ -139,20 +139,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 09981e8c55004254eb5a02f0959291d5
-      internalID: 1633219498
+      spriteID: 6645e852830727248a2cdfd0dbac3e59
+      internalID: 1696389763
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_2
+      name: ExplosionDroneLvl4_2
       rect:
         serializedVersion: 2
         x: 128
@@ -160,20 +160,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e1e2a007610a48c4daae549a990b1f88
-      internalID: 367934912
+      spriteID: 4510c67f8a24b144c98a9736ab88162b
+      internalID: 532836954
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_3
+      name: ExplosionDroneLvl4_3
       rect:
         serializedVersion: 2
         x: 0
@@ -181,20 +181,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 39dd3ab166db50a4c8d484283721bc2b
-      internalID: 1246343150
+      spriteID: 447182ebf11db364ebb4ce7531599f18
+      internalID: -1067510898
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_4
+      name: ExplosionDroneLvl4_4
       rect:
         serializedVersion: 2
         x: 64
@@ -202,20 +202,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3a4e8b89ba3a43749b4b0b06d706feb2
-      internalID: -55651332
+      spriteID: d687f2baaee039248a3e0d1aa79c3773
+      internalID: 1690060313
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_5
+      name: ExplosionDroneLvl4_5
       rect:
         serializedVersion: 2
         x: 128
@@ -223,20 +223,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5e0cee951a3f39048b309b8d73c5c09c
-      internalID: 2126805999
+      spriteID: 83688c9ebddc7284c96a973985032eaa
+      internalID: -1553007065
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_6
+      name: ExplosionDroneLvl4_6
       rect:
         serializedVersion: 2
         x: 0
@@ -244,20 +244,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c884679e4d7917043896602afaf40e7a
-      internalID: -2026902144
+      spriteID: 3237b830378d8da49be1034cace1b82a
+      internalID: 906871091
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Drone_7
+      name: ExplosionDroneLvl4_7
       rect:
         serializedVersion: 2
         x: 64
@@ -265,14 +265,14 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 718d4135c49fd5b4881645fc1ff4754f
-      internalID: 901868902
+      spriteID: 2b6a0f5057e8aac46b7c2b316b80c9ff
+      internalID: -1925943625
       vertices: []
       indices: 
       edges: []
@@ -288,14 +288,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Drone_0: -215136501
-      Drone_1: 1633219498
-      Drone_2: 367934912
-      Drone_3: 1246343150
-      Drone_4: -55651332
-      Drone_5: 2126805999
-      Drone_6: -2026902144
-      Drone_7: 901868902
+      ExplosionDroneLvl4_0: 57666335
+      ExplosionDroneLvl4_1: 1696389763
+      ExplosionDroneLvl4_2: 532836954
+      ExplosionDroneLvl4_3: -1067510898
+      ExplosionDroneLvl4_4: 1690060313
+      ExplosionDroneLvl4_5: -1553007065
+      ExplosionDroneLvl4_6: 906871091
+      ExplosionDroneLvl4_7: -1925943625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

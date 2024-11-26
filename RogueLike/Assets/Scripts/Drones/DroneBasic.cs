@@ -6,7 +6,7 @@ public class DroneBasic : MonoBehaviour
     public float followSpeed = 5f;
     public float followDistance = 2f;
     public float smoothFactor = 0.1f;
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     private Vector3 velocity = Vector3.zero;
 
     void Start()

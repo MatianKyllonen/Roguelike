@@ -303,8 +303,8 @@ MonoBehaviour:
   orb: {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
-  attackRange: 2
-  attackSpeed: 1
+  attackRange: 1.6
+  attackSpeed: 1.6
 --- !u!61 &3654343721795712825
 BoxCollider2D:
   m_ObjectHideFlags: 0

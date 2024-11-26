@@ -226,6 +226,11 @@ public class UpgradeManager : MonoBehaviour
 
             case "Shooting Drone":
 
+                if(level > 0)
+                    UpgradeDroneSprite(playerNumber, "shootingDrone", level);
+                    
+                    
+
                 if (level == 0)
                 {
                     // 35 Damage
@@ -269,6 +274,8 @@ public class UpgradeManager : MonoBehaviour
 
             case "Healing Drone":
 
+                if (level > 0)
+                    UpgradeDroneSprite(playerNumber, "healingDrone", level);
                 if (level == 0)
                 {
                     // Healing 10
@@ -311,6 +318,10 @@ public class UpgradeManager : MonoBehaviour
                 break;
             case "Explosive Drone":
 
+
+                if(level > 0)
+                    UpgradeDroneSprite(playerNumber, "explosiveShotDrone", level);
+
                 if (level == 0)
                 {
                     // Explosion Damage 20
@@ -321,6 +332,7 @@ public class UpgradeManager : MonoBehaviour
                 else if (level == 1)
                 {
                     // Explosion Damage 30
+                    
                     IncreaseDroneExplosionDamage(playerNumber, 1.50f);
                 }
                 else if (level == 2)
@@ -482,36 +494,36 @@ public class UpgradeManager : MonoBehaviour
             case "Shooting Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Level 1: Unlock - Summon a shooting drone";
-                    case 1: return "Level 2: Damage + 50%";
-                    case 2: return "Level 3: Damage + 50%, Fire Rate + 30%";
-                    case 3: return "Level 4: Fire Rate + 50%";
-                    case 4: return "Level 5: Damage + 30%";
-                    case 5: return "Level 6: Damage + 20%, Fire Rate + 50%";
+                    case 0: return "Unlock:  Summon a shooting drone";
+                    case 1: return "Level 1: Damage + 50%";
+                    case 2: return "Level 2: Damage + 50%, Fire Rate + 30%";
+                    case 3: return "Level 3: Fire Rate + 50%";
+                    case 4: return "Level 4: Damage + 30%";
+                    case 5: return "Level 5: Damage + 20%, Fire Rate + 50%";
                     default: return "No upgrade available";
                 }
 
             case "Healing Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Level 1: Unlock - Summon a healing drone";
-                    case 1: return "Level 2: Healing Rate + 10%";
-                    case 2: return "Level 3: Healing + 30%, Healing Rate + 20%";
-                    case 3: return "Level 4: Healing + 20%";
-                    case 4: return "Level 5: Healing + 10, Move Speed + 20%";
-                    case 5: return "Level 6: Healing Rate + 25%, Healing Amount + 30%";
+                    case 0: return "Unlock:  Summon a healing drone";
+                    case 1: return "Level 1: Healing Rate + 10%";
+                    case 2: return "Level 2: Healing + 30%, Healing Rate + 20%";
+                    case 3: return "Level 3: Healing + 20%";
+                    case 4: return "Level 4: Healing + 10, Move Speed + 20%";
+                    case 5: return "Level 5: Healing Rate + 25%, Healing Amount + 30%";
                     default: return "No upgrade available.";
                 }
 
             case "Explosive Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Level 1: Unlock - Summon an explosive drone";
-                    case 1: return "Level 2: Explosion Damage + 50%";
-                    case 2: return "Level 3: Explosion Damage + 25%, Fire Rate + 20%";
-                    case 3: return "Level 4: Explosion Damage + 10%, Speed + 25%";
-                    case 4: return "Level 5: Explosion Damage + 25%";
-                    case 5: return "Level 6: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
+                    case 0: return "Unlock:  Summon an explosive drone";
+                    case 1: return "Level 1: Explosion Damage + 50%";
+                    case 2: return "Level 2: Explosion Damage + 25%, Fire Rate + 20%";
+                    case 3: return "Level 3: Explosion Damage + 10%, Speed + 25%";
+                    case 4: return "Level 4: Explosion Damage + 25%";
+                    case 5: return "Level 5: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
                     default: return "No upgrade available.";
                 }
 
@@ -522,8 +534,55 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    private void UpgradeDroneSprite(int playerNumber, string type, int level)
+    {
+        GameObject drone = null;
+
+        switch (type)
+        {
+            case "shootingDrone":
+                drone = FindItemInInventory<ShootingDrone>(playerNumber)?.gameObject;
+                break;
+            case "healingDrone":
+                drone = FindItemInInventory<HealingDrone>(playerNumber)?.gameObject;
+                break;
+            case "explosiveShotDrone":
+                drone = FindItemInInventory<ExplosiveShotDrone>(playerNumber)?.gameObject;
+                break;
+            default:
+                Debug.LogError($"Invalid drone type: {type}");
+                return;
+        }
 
 
+        if (drone == null)
+        {
+            Debug.LogError($"Drone of type {type} not found for player {playerNumber}");
+            return;
+        }
+
+        Transform root = drone.transform.Find("Root");
+        if (root == null)
+        {
+            Debug.LogError($"Root not found in drone {drone.name}");
+            return;
+        }
+
+        for (int i = 1; i <= 5; i++)
+        {
+            Transform levelTransform = root.Find($"Lvl{i}");
+            if (levelTransform != null)
+            {
+                levelTransform.gameObject.SetActive(i == level);
+                if(i == level)
+                    drone.gameObject.GetComponent<DroneBasic>().spriteRenderer = levelTransform.gameObject.GetComponent<SpriteRenderer>();
+            }
+            else
+            {
+                Debug.LogWarning($"Lvl{i} not found in {root.name}");
+            }
+        }
+    }
 
 
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,9 +31,15 @@ public class BasicEnemy : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip hurtSound;
 
-    public float attackRange = 1.5f; // Range within which the enemy will deal damage to the player
-    public float attackSpeed = 1f;  // Time in seconds between attacks
-    private float lastAttackTime = 0f; // Timer for attack cooldown
+    public float attackRange = 1.1f;
+    public float attackSpeed = 1f;  
+    private float lastAttackTime = 0f;
+
+    private bool onFire;
+    private float fireDuration;
+    private float onFireTimer;
+    private int fireDamage;
+    private float fireTickRate;
 
     void Start()
     {
@@ -60,6 +67,28 @@ public class BasicEnemy : MonoBehaviour
         // If there are no players, return
         if (players.Length == 0)
             return;
+
+        if(onFire)
+        {
+            
+            if (onFireTimer > 0f)
+            {
+                onFireTimer -= Time.deltaTime;
+                fireTickRate -= Time.deltaTime;
+
+                if (fireTickRate > 0.5f)
+                {
+                    fireTickRate = 0;
+                    TakeDamage(fireDamage);
+                }
+            }
+            else
+            {
+                fireDamage = 0;
+                fireDuration = 0;
+                onFire = false;
+            }
+        }
 
         // Find the closest player
         float closestDistance = Mathf.Infinity;
@@ -104,6 +133,16 @@ public class BasicEnemy : MonoBehaviour
                 spriteRenderer.color = originalColor;  // Reset color after the flash
             }
         }
+    }
+
+    public void SetOnFire(float duration, int damage)
+    {
+        onFire = true;
+        if(fireDuration < duration)    
+            duration = fireDuration;
+
+        if (fireDamage < damage)
+            fireDamage = damage;
     }
 
     // Moves the enemy towards the nearest player

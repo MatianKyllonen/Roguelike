@@ -192,14 +192,14 @@ MonoBehaviour:
   moveSpeed: 2
   maxHealth: 750
   health: 0
-  damage: 10
+  damage: 16
   flashDuration: 0.1
   spawnedObject: {fileID: 0}
   orb: {fileID: 2503092565083826754, guid: a7450f883c514ec459705e07cd64217b, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
-  attackRange: 2
-  attackSpeed: 1
+  attackRange: 1.6
+  attackSpeed: 1.6
 --- !u!114 &6106965762313950246
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -195,10 +195,10 @@ MonoBehaviour:
   damage: 20
   flashDuration: 0.1
   spawnedObject: {fileID: 0}
-  orb: {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
+  orb: {fileID: 2503092565083826754, guid: cb6d40377c9fd9a419f2e6d56fbc9035, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
-  attackRange: 1.6
+  attackSpeed: 1
 --- !u!114 &8711733407349527423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,9 +212,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootingRange: 9
-  fireRate: 1.5
-  projectileSpeed: 6
-  projectilePrefab: {fileID: 2062371035564790006, guid: 3794747d50da371499891f94355acd7a, type: 3}
+  fireRate: 0.8
+  projectileSpeed: 0
+  projectilePrefab: {fileID: 2062371035564790006, guid: c4cc9133bc48f194e9d71827cc62a7f6, type: 3}
 --- !u!61 &1201103524212847173
 BoxCollider2D:
   m_ObjectHideFlags: 0
