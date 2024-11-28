@@ -35,6 +35,8 @@ public class BasicEnemy : MonoBehaviour
     public float attackSpeed = 1f;  
     private float lastAttackTime = 0f;
 
+    public GameObject hitParticle;
+
     private bool onFire;
     private float fireDuration;
     private float onFireTimer;
@@ -171,7 +173,7 @@ public class BasicEnemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
-
+        Instantiate(hitParticle, transform.position, Quaternion.identity);
         audioSource.PlayOneShot(hurtSound, 0.2f);
 
         // Trigger the red flash when the enemy takes damage

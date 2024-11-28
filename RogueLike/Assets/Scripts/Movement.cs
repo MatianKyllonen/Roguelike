@@ -290,7 +290,12 @@ public class Movement : MonoBehaviour
 
             if (reviveCounter >= reviveTime)
             {
-                Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 1, 0);
+                if(playerNumber == 1)
+                    Gamemanager.instance.UpdatePlayerStats(2, 0, 0, 1, 0);
+
+                if (playerNumber == 2)
+                    Gamemanager.instance.UpdatePlayerStats(1, 0, 0, 1, 0);
+
                 Revive();
             }
         }
