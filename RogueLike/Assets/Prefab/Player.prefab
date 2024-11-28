@@ -155,7 +155,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9490d8f34c94994fb34e0cb0da0571b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -959,7 +959,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9490d8f34c94994fb34e0cb0da0571b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1168,6 +1168,7 @@ MonoBehaviour:
   dashCooldown: 2
   dashTime: 0.25
   animator: {fileID: 3607561119689919473}
+  playerClone: {fileID: 1992526016799167371, guid: 35458e0231febd14c945747523cd69a0, type: 3}
   dashSound: {fileID: 8300000, guid: 7f39d9e54285ab24db2092f967b5cc62, type: 3}
   flashDuration: 0.1
   splooged: 0

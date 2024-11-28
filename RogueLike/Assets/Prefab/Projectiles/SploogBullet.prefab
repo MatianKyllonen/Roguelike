@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4036571591799019829}
   - component: {fileID: 6947996573959895230}
   - component: {fileID: 3864199979711876550}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SploogBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

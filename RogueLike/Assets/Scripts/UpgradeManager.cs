@@ -28,6 +28,7 @@ public class UpgradeManager : MonoBehaviour
     public GameObject shootingDrone;
     public GameObject healingDrone;
     public GameObject explosiveDrone;
+    public GameObject projectileShield;
 
     private int player1Index = 0;
     private int player2Index = 0;
@@ -144,7 +145,7 @@ public class UpgradeManager : MonoBehaviour
         }
 
         if (Input.GetButtonDown("Submit2") && !player2Selected && canSelect)
-        {          
+        {
             ApplyUpgrade(currentUpgrades2[player2Index], 2);
             player2Selected = true;
             player2ShopUI.GetComponent<Animator>().SetTrigger("CloseShop");
@@ -241,10 +242,10 @@ public class UpgradeManager : MonoBehaviour
 
             case "Shooting Drone":
 
-                if(level > 0)
+                if (level > 0)
                     UpgradeDroneSprite(playerNumber, "shootingDrone", level);
-                    
-                    
+
+
 
                 if (level == 0)
                 {
@@ -262,7 +263,7 @@ public class UpgradeManager : MonoBehaviour
                     // 78 Damage
                     // 1.04 Fire Rate
                     IncreaseDroneDamage(playerNumber, 1.50f);
-                    IncreaseFireRate(playerNumber, 1.30f);                  
+                    IncreaseFireRate(playerNumber, 1.30f);
 
                 }
                 else if (level == 3)
@@ -308,7 +309,7 @@ public class UpgradeManager : MonoBehaviour
                     // Healing 13
                     // Healing Rate 11.3s
                     IncreaseDroneHealing(playerNumber, 1.3f);
-                    IncreaseDroneHealingRate(playerNumber, 1.20f);                
+                    IncreaseDroneHealingRate(playerNumber, 1.20f);
                 }
                 else if (level == 3)
                 {
@@ -334,7 +335,7 @@ public class UpgradeManager : MonoBehaviour
             case "Explosive Drone":
 
 
-                if(level > 0)
+                if (level > 0)
                     UpgradeDroneSprite(playerNumber, "explosiveShotDrone", level);
 
                 if (level == 0)
@@ -347,7 +348,7 @@ public class UpgradeManager : MonoBehaviour
                 else if (level == 1)
                 {
                     // Explosion Damage 30
-                    
+
                     IncreaseDroneExplosionDamage(playerNumber, 1.50f);
                 }
                 else if (level == 2)
@@ -383,6 +384,54 @@ public class UpgradeManager : MonoBehaviour
                     IncreaseExposionDroneSpeed(playerNumber, 1.25f);
                 }
 
+                break;
+            case "Projectile Shield":
+
+                if (level == 0)
+                {
+                    // Explosion Damage 20
+                    // Fire Rate 0.5
+                    // Speed 0.5
+                    SpawnUpgrade(projectileShield, FindPlayer(playerNumber).transform, playerNumber, true);
+                }
+                else if (level == 1)
+                {
+                    // Explosion Damage 30
+
+                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
+                }
+                else if (level == 2)
+                {
+                    // Explosion Damage 38
+                    // Fire Rate 0.6
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                    IncreaseExposionDroneFireRate(playerNumber, 1.2f);
+
+                }
+                else if (level == 3)
+                {
+                    // Explosion Damage 42
+                    // Speed 0.62
+
+                    IncreaseDroneExplosionDamage(playerNumber, 1.1f);
+                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
+
+                }
+                else if (level == 4)
+                {
+                    // Explosion Damage 53
+                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
+                }
+                else if (level == 5)
+                {
+                    // Explosion Damage 80
+                    // Fire Rate 0.78
+                    // Speed 0.75
+
+                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
+                    IncreaseExposionDroneFireRate(playerNumber, 1.30f);
+                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
+                }
                 break;
 
             default:
@@ -589,7 +638,7 @@ public class UpgradeManager : MonoBehaviour
             if (levelTransform != null)
             {
                 levelTransform.gameObject.SetActive(i == level);
-                if(i == level)
+                if (i == level)
                     drone.gameObject.GetComponent<DroneBasic>().spriteRenderer = levelTransform.gameObject.GetComponent<SpriteRenderer>();
             }
             else
@@ -611,7 +660,7 @@ public class UpgradeManager : MonoBehaviour
 
     private IEnumerator CloseDelay()
     {
-        
+
         yield return new WaitForSeconds(0.3f);
         upgradeScreen.SetActive(false);
         shopOpen = false;
@@ -626,8 +675,8 @@ public class UpgradeManager : MonoBehaviour
         return null;
     }
 
-    private void SpawnUpgrade(GameObject itemToSpawn, Transform droneTarget, int playerNumber)
-    {
+    private void SpawnUpgrade(GameObject itemToSpawn, Transform droneTarget, int playerNumber, bool attached = false)
+   {
         GameObject spawnable = Instantiate(itemToSpawn, droneTarget.position, Quaternion.identity);
 
         FindPlayer(playerNumber).GetComponent<Inventory>().items.Add(spawnable.transform);

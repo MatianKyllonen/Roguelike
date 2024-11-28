@@ -214,8 +214,9 @@ public class BasicEnemy : MonoBehaviour
 
     void Die()
     {
-        if (Random.Range(0, 100) >= 50)
-            Instantiate(orb, transform.position, Quaternion.identity);
+        if(orb != null)
+            if (Random.Range(0, 100) >= 50)
+                Instantiate(orb, transform.position, Quaternion.identity);
 
         if (spawnedObject != null)
         {

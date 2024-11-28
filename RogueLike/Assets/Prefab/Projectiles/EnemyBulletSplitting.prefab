@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7043436853724592970}
   - component: {fileID: 4036571591799019829}
   - component: {fileID: 2708205848877796343}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EnemyBulletSplitting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,3 +175,4 @@ MonoBehaviour:
   splitDelay: 1
   subProjectileSpeed: 6
   splitAngle: 45
+  splitProjectiles: 8

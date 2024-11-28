@@ -42,6 +42,8 @@ public class Movement : MonoBehaviour
     private bool dashing;
     public Animator animator;
 
+    public GameObject playerClone;
+
     private AudioSource audioSoure;
     public AudioClip dashSound;
 
@@ -145,6 +147,7 @@ public class Movement : MonoBehaviour
         }
         else
         {
+            
             rb.velocity = movement * (dashSpeed * moveSpeedMultiplier);
         }
 
@@ -192,7 +195,7 @@ public class Movement : MonoBehaviour
 
     // Dash method remains unchanged
     void Dash()
-    {
+    {   
         audioSoure.PlayOneShot(dashSound, 0.2f);
         dashing = true;
         StartCoroutine(ResetVelocityAfterDash(dashTime));
@@ -201,6 +204,7 @@ public class Movement : MonoBehaviour
 
     IEnumerator ResetVelocityAfterDash(float dashDuration)
     {
+        StartCoroutine(DashEffect());
         yield return new WaitForSeconds(dashDuration);
         dashCooldownTimer = dashCooldown;
         dashBarUI.SetActive(true);
@@ -295,6 +299,20 @@ public class Movement : MonoBehaviour
             reviveCounter = 0f;
             reviveSlider.value = 0f;
             reviveBarUI.SetActive(false);
+        }
+    }
+
+    IEnumerator DashEffect()
+    {
+        SpriteRenderer playerSprite = gameObject.GetComponentInChildren<SpriteRenderer>();
+
+        while (dashing)
+        {
+            GameObject clone = Instantiate(playerClone, playerSprite.gameObject.transform.position, Quaternion.identity);
+            clone.GetComponent<SpriteRenderer>().sprite = playerSprite.sprite;
+            clone.GetComponent<SpriteRenderer>().flipX = playerSprite.flipX;
+            Destroy(clone, 0.2f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
