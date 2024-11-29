@@ -68,7 +68,7 @@ public class Gamemanager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            DisplayPlayerStats();
+           GameLost();
         }
     }
 
@@ -131,11 +131,35 @@ public class Gamemanager : MonoBehaviour
 
     private IEnumerator GamelostDelay()
     {
-        yield return new WaitForSeconds(2f);
-        DisplayGameOverStats();
+        yield return new WaitForSeconds(2f); // Delay before showing Game Over screen
+        gameOverScreen.SetActive(true); // Enable Game Over screen
+        yield return new WaitForSeconds(1.2f); // Additional delay before showing stats
+        DisplayGameOverStats(); // Show stats for Player 1 and Player 2
         gameLost = true;
-        
     }
+
+    private void DisplayGameOverStats()
+    {
+        // Display stats for Player 1
+        StartCoroutine(ActivateStatsWithDelay(gameOverStatsPlayer1, playerStats[0]));
+
+        // Display stats for Player 2
+        StartCoroutine(ActivateStatsWithDelay(gameOverStatsPlayer2, playerStats[1]));
+    }
+
+    private IEnumerator ActivateStatsWithDelay(GameObject statsPanel, int[] stats)
+    {
+        // Ensure the panel is disabled initially
+        statsPanel.SetActive(false);
+
+        // Wait for 1 second
+        yield return new WaitForSeconds(1f);
+
+        // Activate the panel and update stats
+        statsPanel.SetActive(true);
+        UpdateGameOverStatsUI(statsPanel, stats);
+    }
+
 
     private IEnumerator GameRestart()
     {
@@ -143,18 +167,6 @@ public class Gamemanager : MonoBehaviour
         fade.GetComponent<Animator>().SetTrigger("FadeIn");
         yield return new WaitForSeconds(1f);      
         SceneManager.LoadScene(0);
-    }
-
-    private void DisplayGameOverStats()
-    {
-        // Activate the Game Over screen
-        gameOverScreen.SetActive(true);
-
-        // Display stats for Player 1
-        UpdateGameOverStatsUI(gameOverStatsPlayer1, playerStats[0]);
-
-        // Display stats for Player 2
-        UpdateGameOverStatsUI(gameOverStatsPlayer2, playerStats[1]);
     }
 
     private void UpdateGameOverStatsUI(GameObject statsPanel, int[] stats)
