@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SpinningShield : MonoBehaviour
 {
@@ -14,16 +15,22 @@ public class SpinningShield : MonoBehaviour
     private SpriteRenderer shieldSprite;
 
     public GameObject shieldCenter;
-    //public Sprite brokenSprite;
+    public Sprite brokenSprite;
+    private Sprite defaulSprite;
 
     [Header("Rotation Settings")]
-    [SerializeField] private Transform target;
-    [SerializeField] private float rotationSpeed = 100f;
+    public Transform target;
+    public float rotationSpeed = 100f;
+
+    public GameObject shieldBarUI;
+    public Slider shieldSlider;
     void Start()
     {
+
         isActive = true;
         shield = GetComponent<BoxCollider2D>();
         shieldSprite = GetComponent<SpriteRenderer>();
+        defaulSprite = shieldSprite.sprite;
     }
     private void Update()
     {
@@ -34,15 +41,25 @@ public class SpinningShield : MonoBehaviour
 
         if(!isActive)
         {
-            if(0 < regenTimer)
+            if (0 < regenTimer)
             {
                 regenTimer -= Time.deltaTime;
+                shieldSlider.value = regenTimer / regenTime;
             }
             else
             {
                 EnableShield();
             }
+
         }
+
+        if (shieldBarUI != null)
+        {
+            // Set the position to match the shield or desired anchor, but reset rotation
+            shieldBarUI.transform.position = shieldCenter.transform.position;
+            shieldBarUI.transform.rotation = Quaternion.identity;
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -51,6 +68,7 @@ public class SpinningShield : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("EnemyProjectile") && isActive)
         {         
             health -= 1;
+            CheckSprite();
             Debug.Log(health);
             Destroy(collision.gameObject);
             if (health <= 0)
@@ -64,6 +82,7 @@ public class SpinningShield : MonoBehaviour
     {
         maxHealth += amount;
         health = maxHealth;
+        CheckSprite();
     }
 
     public void DisableShield()
@@ -72,13 +91,24 @@ public class SpinningShield : MonoBehaviour
         shield.enabled = false;
         shieldSprite.enabled = false;
         regenTimer = regenTime;
+        shieldBarUI.SetActive(true);
     }
 
     public void EnableShield()
-    {
+    {    
         health = maxHealth;
         isActive = true;
         shield.enabled = true;
         shieldSprite.enabled = true;
+        CheckSprite();
+        shieldBarUI.SetActive(false);
+    }
+
+    private void CheckSprite()
+    {
+        if (health == 1 && maxHealth != 1)
+            shieldSprite.sprite = brokenSprite;
+        else
+            shieldSprite.sprite = defaulSprite;
     }
 }

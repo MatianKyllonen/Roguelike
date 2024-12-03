@@ -9,19 +9,20 @@ public class ShootingEnemy : MonoBehaviour
     public float projectileSpeed = 7f;
     public GameObject projectilePrefab;         // The projectile prefab to shoot
     private float nextFireTime = 0f;            // Time at which the enemy is allowed to fire
-    
 
+    private UpgradeManager upgradeManager;
     private Transform targetPlayer;             // The nearest player
     private SpriteRenderer spriteRenderer;      // For flipping the sprite based on player position
 
     void Start()
     {
+        upgradeManager = FindFirstObjectByType<UpgradeManager>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     void Update()
     {
-        if (FindObjectOfType<UpgradeManager>().shopOpen == true)
+        if (upgradeManager.shopOpen == true)
         {
             return;
         }

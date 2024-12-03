@@ -43,8 +43,11 @@ public class BasicEnemy : MonoBehaviour
     private int fireDamage;
     private float fireTickRate;
 
+    public GameObject zesty;
+    private UpgradeManager upgradeManager;
     void Start()
     {
+        upgradeManager = FindFirstObjectByType<UpgradeManager>();
         spawner = FindObjectOfType<EnemySpawner>();
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();  // Get the SpriteRenderer component
@@ -58,7 +61,7 @@ public class BasicEnemy : MonoBehaviour
 
     void Update()
     {
-        if (FindObjectOfType<UpgradeManager>().shopOpen == true)
+        if (upgradeManager.shopOpen == true)
         {
             return;
         }
@@ -193,6 +196,11 @@ public class BasicEnemy : MonoBehaviour
     {
         spriteRenderer.color = Color.red;  // Change the sprite color to red
         flashTimer = flashDuration;        // Start the flash timer
+    }
+
+    private void SpawnChest()
+    {
+
     }
 
     // Flip the sprite to face the player based on their position

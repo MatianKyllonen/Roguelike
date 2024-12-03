@@ -1175,6 +1175,7 @@ MonoBehaviour:
   sploogedDuration: 3
   sploogedSpeedMultiplier: 0.5
   sploogeSprite: {fileID: 7456375863938052863}
+  walkEffect: {fileID: 4360212871640881416, guid: 89022fad0489665438227485e70a9e00, type: 3}
 --- !u!114 &3652379669354474578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1198,9 +1199,12 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerSprite: {fileID: 362170140091309039}
   gunSprite: {fileID: 1480636481122393173}
   shotSound: {fileID: 8300000, guid: fb9800627e33e3b47a4760ab0ab59e44, type: 3}
   playerNumber: 0
+  recoilDistance: 0.06
+  recoilDuration: 0.15
 --- !u!61 &-4658779364649876043
 BoxCollider2D:
   m_ObjectHideFlags: 0

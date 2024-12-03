@@ -389,48 +389,22 @@ public class UpgradeManager : MonoBehaviour
 
                 if (level == 0)
                 {
-                    // Explosion Damage 20
-                    // Fire Rate 0.5
-                    // Speed 0.5
                     SpawnUpgrade(projectileShield, FindPlayer(playerNumber).transform, playerNumber, true);
                 }
                 else if (level == 1)
                 {
-                    // Explosion Damage 30
-
-                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
+                    IncreaseShieldHealth(playerNumber);
                 }
                 else if (level == 2)
                 {
-                    // Explosion Damage 38
-                    // Fire Rate 0.6
-                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
-                    IncreaseExposionDroneFireRate(playerNumber, 1.2f);
+                    IncreaseShieldHealth(playerNumber);
+                    DecreaseShieldCoolDown(playerNumber, 10);
 
                 }
                 else if (level == 3)
                 {
-                    // Explosion Damage 42
-                    // Speed 0.62
-
-                    IncreaseDroneExplosionDamage(playerNumber, 1.1f);
-                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
-
-                }
-                else if (level == 4)
-                {
-                    // Explosion Damage 53
-                    IncreaseDroneExplosionDamage(playerNumber, 1.25f);
-                }
-                else if (level == 5)
-                {
-                    // Explosion Damage 80
-                    // Fire Rate 0.78
-                    // Speed 0.75
-
-                    IncreaseDroneExplosionDamage(playerNumber, 1.50f);
-                    IncreaseExposionDroneFireRate(playerNumber, 1.30f);
-                    IncreaseExposionDroneSpeed(playerNumber, 1.25f);
+                    IncreaseShieldHealth(playerNumber);
+                    DecreaseShieldCoolDown(playerNumber, 20);
                 }
                 break;
 
@@ -590,6 +564,15 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Level 5: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
                     default: return "No upgrade available.";
                 }
+            case "Projectile Shield":
+                switch (upgradeLevel)
+                {
+                    case 0: return "Unlock:  Summon a shield that rotates around you";
+                    case 1: return "Level 1: Hits + 1";
+                    case 2: return "Level 2: Hits + 1, Recharge time - 10%";
+                    case 3: return "Level 3: Hits + 1, Recharge time - 20%";
+                    default: return "No upgrade available.";
+                }
 
             default:
                 return "No description available.";
@@ -680,7 +663,20 @@ public class UpgradeManager : MonoBehaviour
         GameObject spawnable = Instantiate(itemToSpawn, droneTarget.position, Quaternion.identity);
 
         FindPlayer(playerNumber).GetComponent<Inventory>().items.Add(spawnable.transform);
-        spawnable.GetComponent<DroneBasic>().target = droneTarget;
+
+        if(spawnable.GetComponent<DroneBasic>() != null)
+            spawnable.GetComponent<DroneBasic>().target = droneTarget;
+
+        if (attached)
+        {
+            AttachUpgrade(spawnable, FindPlayer(playerNumber).transform);
+            spawnable.GetComponentInChildren<SpinningShield>().target = FindPlayer(playerNumber).transform;
+        }
+    }
+
+    private void AttachUpgrade(GameObject spawnable, Transform player) 
+    {
+        spawnable.transform.parent = player;    
     }
 
     private T FindItemInInventory<T>(int playerNumber) where T : Component
@@ -697,9 +693,36 @@ public class UpgradeManager : MonoBehaviour
                 {
                     return component;
                 }
+                component = item.GetComponentInChildren<T>();
+                if (component != null)
+                {
+                    return component;
+                }
             }
         }
         return null;
+    }
+
+    // Projectile Shield
+
+    private void IncreaseShieldHealth(int playerNumber)
+    {
+        SpinningShield shield = FindItemInInventory<SpinningShield>(playerNumber);
+
+        if(shield != null)
+        {
+            shield.IncreaseHealth(1);
+        }
+    }
+
+    private void DecreaseShieldCoolDown(int playerNumber, float percentage)
+    {
+        SpinningShield shield = FindItemInInventory<SpinningShield>(playerNumber);
+
+        if (shield != null)
+        {
+            shield.regenTime = (shield.regenTime / percentage);
+        }
     }
 
 

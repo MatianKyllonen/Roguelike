@@ -17,11 +17,16 @@ public class Gun : MonoBehaviour
     public Transform gunMuzzle;
     public LayerMask enemyLayer;
 
+    public GameObject playerSprite;
     public SpriteRenderer gunSprite;
     private float nextFireTime = 0f;
     private AudioSource audioSource;
     public AudioClip shotSound;
     public int playerNumber;
+
+    public float recoilDistance = 0.1f; // Distance to twitch back
+    public float recoilDuration = 0.1f; // Time to return to original position
+
 
     private void Start()
     {
@@ -91,7 +96,29 @@ public class Gun : MonoBehaviour
         }
 
         nextFireTime = Time.time + 1f / (fireRate * fireRateMultiplier);
+
+        // Trigger recoil effect
+        StartCoroutine(RecoilEffect(direction));
     }
+
+    IEnumerator RecoilEffect(Vector2 direction)
+    {
+        Vector3 originalPosition = playerSprite.transform.localPosition;
+
+        // Calculate the recoil position
+        Vector3 recoilPosition = originalPosition - (Vector3)direction.normalized * recoilDistance;
+
+        // Move to recoil position
+        playerSprite.transform.localPosition = recoilPosition;
+
+        // Wait for recoil duration
+        yield return new WaitForSeconds(recoilDuration / fireRate);
+
+        // Return to original position
+        playerSprite.transform.localPosition = originalPosition;
+    }
+
+
 
 
     void RotateGunTowardsEnemy(GameObject target)

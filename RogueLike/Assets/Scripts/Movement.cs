@@ -61,8 +61,13 @@ public class Movement : MonoBehaviour
     public float sploogedSpeedMultiplier = 0.5f; // Speed reduction when splooged
     public GameObject sploogeSprite;
 
+    private float particleTimer = 0f;
+    public GameObject walkEffect;
+    private UpgradeManager upgradeManager;
+
     private void Start()
     {
+        upgradeManager = FindFirstObjectByType<UpgradeManager>();
         audioSoure = GetComponent<AudioSource>();
         shooting = GetComponent<Gun>();
         rb = GetComponent<Rigidbody2D>();
@@ -101,7 +106,7 @@ public class Movement : MonoBehaviour
         }
 
         // Block movement and dashing if the shop is open
-        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        if (upgradeManager.shopOpen == true)
         {
             rb.velocity = Vector2.zero;
             animator.SetBool("isMoving", false);
@@ -144,10 +149,22 @@ public class Movement : MonoBehaviour
         if (!dashing)
         {
             rb.velocity = movement * (moveSpeed * moveSpeedMultiplier);
+
+            if(movement.magnitude > 0)
+            {
+                particleTimer += Time.deltaTime;
+
+                if (particleTimer > 0.1f)
+                {
+                    Vector3 spawnPoisiton = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+                    Instantiate(walkEffect, spawnPoisiton, Quaternion.identity);
+                    particleTimer = 0f;
+                }
+            }
+
         }
         else
         {
-            
             rb.velocity = movement * (dashSpeed * moveSpeedMultiplier);
         }
 
