@@ -29,6 +29,8 @@ public class Movement : MonoBehaviour
     public float reviveTime = 3f;
     private float reviveCounter = 0f;
 
+    
+
     public GameObject reviveBarUI;
     public Slider reviveSlider;
 
@@ -232,14 +234,14 @@ public class Movement : MonoBehaviour
     private void FlashRed()
     {
         spriteRenderer.color = Color.red;
-        flashTimer = flashDuration;
+        flashTimer = flashDuration + 0.1f;
     }
 
 
     private void FlashGreen()
     {
         spriteRenderer.color = Color.green;
-        flashTimer = flashDuration;
+        flashTimer = flashDuration + 0.2f;
     }
 
     public void TakeDamage(int damage)
@@ -253,6 +255,8 @@ public class Movement : MonoBehaviour
         }
 
         health -= damage;
+
+        FindObjectOfType<ScreenShake>()?.TriggerShake();
         FlashRed();
         CalculateHealth();
 
@@ -286,6 +290,9 @@ public class Movement : MonoBehaviour
         shooting.enabled = false;
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
+
+        health = 0;
+        CalculateHealth();
 
         if (AreBothPlayersKnocked())
         {
@@ -351,6 +358,9 @@ public class Movement : MonoBehaviour
         spriteRenderer.sprite = mainSprite;
         CalculateHealth();
         reviveBarUI.SetActive(false);
+
+        invincibility = true;
+        invincibilityTimer = 0.4f;
     }
 
     void CalculateHealth()

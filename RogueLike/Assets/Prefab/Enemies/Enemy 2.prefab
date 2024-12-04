@@ -59,9 +59,11 @@ MonoBehaviour:
   orb: {fileID: 2503092565083826754, guid: cb6d40377c9fd9a419f2e6d56fbc9035, type: 3}
   damageIndicatorPrefab: {fileID: 2657388555782773284, guid: 2e1eeb07b814aba4d832b9e576fe5818, type: 3}
   hurtSound: {fileID: 8300000, guid: 4b3169afea6b1244eaca53ac54de15e3, type: 3}
-  attackRange: 1
+  attackRange: 1.3
   attackSpeed: 1
   hitParticle: {fileID: 6414740444379946628, guid: cce0b48083f97c04aaecfc3e6ff76b19, type: 3}
+  zesty: {fileID: 9173948173446278739, guid: 432d4ab38921f5c448d52b89d6d3cee2, type: 3}
+  zestChance: 1
 --- !u!114 &-6892167835045268986
 MonoBehaviour:
   m_ObjectHideFlags: 0

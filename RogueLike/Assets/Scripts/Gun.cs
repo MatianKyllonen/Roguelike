@@ -13,6 +13,8 @@ public class Gun : MonoBehaviour
     public float damage = 50;
     public float damageMultiplier = 1;
 
+    public float lifeStealChance = 0f;
+
     public GameObject bulletPrefab;
     public Transform gunMuzzle;
     public LayerMask enemyLayer;
@@ -80,6 +82,8 @@ public class Gun : MonoBehaviour
         GameObject bullet = Instantiate(bulletPrefab, gunMuzzle.position, Quaternion.identity);
 
         Bullet bulletComponent = bullet.GetComponent<Bullet>();
+        bulletComponent.player = GetComponent<Movement>();
+        bulletComponent.lifeStealChance = lifeStealChance;
         bulletComponent.damage = Mathf.RoundToInt(damage * damageMultiplier);
         bulletComponent.playerNumber = playerNumber; // Assign player number to bullet
 
@@ -90,6 +94,10 @@ public class Gun : MonoBehaviour
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;  
+        bullet.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));  
+
         if (rb != null)
         {
             rb.velocity = direction * bulletForce;

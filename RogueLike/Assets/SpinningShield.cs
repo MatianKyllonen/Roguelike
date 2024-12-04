@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,6 @@ public class SpinningShield : MonoBehaviour
     public Slider shieldSlider;
     void Start()
     {
-
         isActive = true;
         shield = GetComponent<BoxCollider2D>();
         shieldSprite = GetComponent<SpriteRenderer>();
@@ -56,7 +56,8 @@ public class SpinningShield : MonoBehaviour
         if (shieldBarUI != null)
         {
             // Set the position to match the shield or desired anchor, but reset rotation
-            shieldBarUI.transform.position = shieldCenter.transform.position;
+            Vector3 barPosition = new Vector3(shieldCenter.transform.position.x, shieldCenter.transform.position.y + 1, shieldCenter.transform.position.z);
+            shieldBarUI.transform.position = barPosition;
             shieldBarUI.transform.rotation = Quaternion.identity;
         }
 

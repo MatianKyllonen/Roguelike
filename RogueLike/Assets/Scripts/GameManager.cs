@@ -10,7 +10,7 @@ public class Gamemanager : MonoBehaviour
     public static Gamemanager instance;
 
     private int level = 0;
-    private float nextlevelXp = 100;
+    public float nextlevelXp = 100;
     private int currentXp = 0;
     private float xpMultiplier = 1.3f;
 
@@ -61,14 +61,14 @@ public class Gamemanager : MonoBehaviour
         {
             StartCoroutine(GameRestart());
         }
-        if (Input.GetKeyDown(KeyCode.L) && !upgradesManager.shopOpen)
+        /*if (Input.GetKeyDown(KeyCode.L) && !upgradesManager.shopOpen)
         {
             LevelUp();
-        }
+        }*/
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetButtonDown("Start"))
         {
-           GameLost();
+            StartCoroutine(GameRestart());
         }
     }
 
@@ -178,10 +178,12 @@ public class Gamemanager : MonoBehaviour
         }
 
         // Look for children named "Kills", "Damage", "Revives", and "Healing" under the given stats panel
-        Transform killsObj = statsPanel.transform.Find("Kills");
-        Transform damageObj = statsPanel.transform.Find("Damage");
-        Transform revivesObj = statsPanel.transform.Find("Revives");
-        Transform healingObj = statsPanel.transform.Find("Healing");
+        Transform statsGrid = statsPanel.transform.Find("Stats");
+
+        Transform killsObj = statsGrid.transform.Find("Kills");
+        Transform damageObj = statsGrid.transform.Find("Damage");
+        Transform revivesObj = statsGrid.transform.Find("Revives");
+        Transform healingObj = statsGrid.transform.Find("Healing");
 
         // Update the text for each stat
         if (killsObj != null)

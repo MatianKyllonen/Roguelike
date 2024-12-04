@@ -7,7 +7,7 @@ public class Chest : MonoBehaviour
 {
     [Header("Chest Settings")]
     public float openTime = 2.0f; // Time required to open the chest
-    public GameObject[] lootPrefabs; // Array of loot GameObjects to drop
+    public GameObject xpOrbPrefab; // Prefab for the XP orb
     public Transform lootSpawnPoint; // Point where loot will spawn
     public Slider interactionSlider; // UI slider to show progress
     public GameObject interactionUI; // UI for interaction
@@ -60,14 +60,19 @@ public class Chest : MonoBehaviour
 
         interactionCounter = 0f;
 
-        // Spawn loot between 1 and 3 items
-        int lootCount = Random.Range(1, 4); // Range is inclusive, so 1 to 3
-        for (int i = 0; i < lootCount; i++)
+        // Spawn a single XP orb with half the XP needed for the next level
+        if (xpOrbPrefab != null)
         {
-            if (lootPrefabs.Length > 0)
+            GameObject xpOrb = Instantiate(xpOrbPrefab, lootSpawnPoint.position, Quaternion.identity);
+
+            // Add slight randomness to the spawn position
+            xpOrb.transform.position += Random.insideUnitSphere * 0.5f;
+
+            // Set the XP value to half of GameManager.nextLevelXp
+            LevelPellet xpOrbScript = xpOrb.GetComponent<LevelPellet>();
+            if (xpOrbScript != null)
             {
-                GameObject loot = Instantiate(lootPrefabs[Random.Range(0, lootPrefabs.Length)], lootSpawnPoint.position, Quaternion.identity);
-                loot.transform.position += Random.insideUnitSphere * 0.5f; // Add slight randomness to the spawn position
+                xpOrbScript.xpAmount = Mathf.RoundToInt(Gamemanager.instance.nextlevelXp / 2f);
             }
         }
 

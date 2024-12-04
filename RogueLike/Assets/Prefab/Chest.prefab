@@ -540,10 +540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openTime: 2
-  lootPrefabs:
-  - {fileID: 4467256950639654313, guid: a98545ce3854cbc4d888e9754673dff5, type: 3}
-  - {fileID: 2503092565083826754, guid: cb6d40377c9fd9a419f2e6d56fbc9035, type: 3}
-  - {fileID: 2503092565083826754, guid: a7450f883c514ec459705e07cd64217b, type: 3}
+  xpOrbPrefab: {fileID: 2503092565083826754, guid: 1fa10012736b5f84d813aee230710a81, type: 3}
   lootSpawnPoint: {fileID: 3507494574875511695}
   interactionSlider: {fileID: 827191444428825471}
   interactionUI: {fileID: 3739568362107683055}

@@ -201,6 +201,8 @@ MonoBehaviour:
   attackRange: 1.6
   attackSpeed: 1.6
   hitParticle: {fileID: 6414740444379946628, guid: cce0b48083f97c04aaecfc3e6ff76b19, type: 3}
+  zesty: {fileID: 9173948173446278739, guid: 432d4ab38921f5c448d52b89d6d3cee2, type: 3}
+  zestChance: 3
 --- !u!114 &6106965762313950246
 MonoBehaviour:
   m_ObjectHideFlags: 0

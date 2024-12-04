@@ -44,6 +44,7 @@ public class BasicEnemy : MonoBehaviour
     private float fireTickRate;
 
     public GameObject zesty;
+    public float zestChance = 1f;
     private UpgradeManager upgradeManager;
     void Start()
     {
@@ -224,9 +225,11 @@ public class BasicEnemy : MonoBehaviour
 
     void Die()
     {
-        if(orb != null)
-            if (Random.Range(0, 100) >= 50)
-                Instantiate(orb, transform.position, Quaternion.identity);
+        
+        if(zesty != null && Random.Range(0, 1000) <= zestChance)
+            Instantiate(zesty, transform.position, Quaternion.identity);
+        else if (Random.Range(0, 100) >= 50 && orb != null)
+             Instantiate(orb, transform.position, Quaternion.identity);
 
         if (spawnedObject != null)
         {

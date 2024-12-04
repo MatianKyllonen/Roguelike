@@ -170,24 +170,28 @@ public class UpgradeManager : MonoBehaviour
 
     private Upgrade[] GetRandomUpgrades(int count, int playerNumber)
     {
-        // Filter upgrades that the player hasn't maxed out
+        // List to store the selected upgrades
+        List<Upgrade> selectedUpgrades = new List<Upgrade>();
+
+        // Check the player's inventory for upgradable items
+        Upgrade upgradableFromInventory = GetUpgradableItemFromInventory(playerNumber);
+        if (upgradableFromInventory != null)
+        {
+            // Add the upgradable inventory item as the first item
+            selectedUpgrades.Add(upgradableFromInventory);
+        }
+
+        // Filter upgrades that the player hasn't maxed out, excluding the chosen inventory item
         List<Upgrade> availableUpgrades = new List<Upgrade>();
         foreach (var upgrade in upgrades)
         {
-            if (playerUpgradeLevels[playerNumber][upgrade.name] < upgrade.maxlevel)
+            if (playerUpgradeLevels[playerNumber][upgrade.name] < upgrade.maxlevel && upgrade != upgradableFromInventory)
             {
                 availableUpgrades.Add(upgrade);
             }
         }
 
-        // If no upgrades are available, return an empty array
-        if (availableUpgrades.Count == 0)
-        {
-            Debug.Log($"Player {playerNumber} has no available upgrades.");
-            return new Upgrade[0];
-        }
-
-        // Shuffle the available upgrades list
+        // Shuffle the available upgrades
         for (int i = 0; i < availableUpgrades.Count; i++)
         {
             int randomIndex = Random.Range(i, availableUpgrades.Count);
@@ -197,15 +201,28 @@ public class UpgradeManager : MonoBehaviour
             availableUpgrades[randomIndex] = temp;
         }
 
-        // Select the first 'count' upgrades
-        int selectedCount = Mathf.Min(count, availableUpgrades.Count);
-        Upgrade[] randomUpgrades = new Upgrade[selectedCount];
-        for (int i = 0; i < selectedCount; i++)
+        // Fill the remaining slots with random upgrades
+        int remainingSlots = count - selectedUpgrades.Count;
+        for (int i = 0; i < remainingSlots && i < availableUpgrades.Count; i++)
         {
-            randomUpgrades[i] = availableUpgrades[i];
+            selectedUpgrades.Add(availableUpgrades[i]);
         }
 
-        return randomUpgrades;
+        return selectedUpgrades.ToArray();
+    }
+
+    private Upgrade GetUpgradableItemFromInventory(int playerNumber)
+    {
+        // Get the player's inventory (assuming this is based on the upgrade levels dictionary)
+        foreach (var upgrade in upgrades)
+        {
+            if (playerUpgradeLevels[playerNumber][upgrade.name] > 0 &&
+                playerUpgradeLevels[playerNumber][upgrade.name] < upgrade.maxlevel)
+            {
+                return upgrade; // Return the first upgrade found that is not max level
+            }
+        }
+        return null; // No upgradable item found
     }
 
 
@@ -239,8 +256,14 @@ public class UpgradeManager : MonoBehaviour
             case "Move Speed":
                 movement.moveSpeedMultiplier *= 1.1f;
                 break;
+            case "Life Steal":
+                if (level == 0)
+                    gun.lifeStealChance = 3;
+                else
+                    gun.lifeStealChance *= 1.2f;
+                break;
 
-            case "Shooting Drone":
+            case "Piercing Drone":
 
                 if (level > 0)
                     UpgradeDroneSprite(playerNumber, "shootingDrone", level);
@@ -257,6 +280,7 @@ public class UpgradeManager : MonoBehaviour
                 {
                     // 52 Damage
                     IncreaseDroneDamage(playerNumber, 1.50f);
+                    IncreaseDronePierce(playerNumber, 15f);
                 }
                 else if (level == 2)
                 {
@@ -270,12 +294,14 @@ public class UpgradeManager : MonoBehaviour
                 {
                     // 1.56 Fire Rate
                     IncreaseFireRate(playerNumber, 1.50f);
+                    IncreaseDronePierce(playerNumber, 25f);
 
                 }
                 else if (level == 4)
                 {
                     // 102 Damage
                     IncreaseDroneDamage(playerNumber, 1.30f);
+                    IncreaseDronePierce(playerNumber, 35f);
 
                 }
                 else if (level == 5)
@@ -284,6 +310,7 @@ public class UpgradeManager : MonoBehaviour
                     // 2.34 Fire Rate
                     IncreaseDroneDamage(playerNumber, 1.20f);
                     IncreaseFireRate(playerNumber, 1.50f);
+                    IncreaseDronePierce(playerNumber, 50f);
                 }
 
                 break;
@@ -398,13 +425,15 @@ public class UpgradeManager : MonoBehaviour
                 else if (level == 2)
                 {
                     IncreaseShieldHealth(playerNumber);
-                    DecreaseShieldCoolDown(playerNumber, 10);
+                    DecreaseShieldCoolDown(playerNumber, 25);
 
                 }
                 else if (level == 3)
                 {
                     IncreaseShieldHealth(playerNumber);
-                    DecreaseShieldCoolDown(playerNumber, 20);
+                    IncreaseShieldHealth(playerNumber);
+
+                    DecreaseShieldCoolDown(playerNumber, 50);
                 }
                 break;
 
@@ -529,15 +558,21 @@ public class UpgradeManager : MonoBehaviour
             case "Move Speed":
                 return $"Level {upgradeLevel + 1}: Move Speed + {10 * (upgradeLevel + 1)}%";
 
-            case "Shooting Drone":
+            case "Life Steal":
+                if(upgradeLevel == 0)
+                    return "Unlock: 3% Chance to drain enemy health when shooting";
+                else
+                    return $"Level {upgradeLevel + 1}: Life Steal Chance + {2 * (upgradeLevel + 1)}%";
+
+            case "Piercing Drone":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Unlock:  Summon a shooting drone";
-                    case 1: return "Level 1: Damage + 50%";
+                    case 0: return "Unlock:  Summon a shooting drone that has a chance to pierce";
+                    case 1: return "Level 1: Damage + 50%, Pierce Chance + 5%";
                     case 2: return "Level 2: Damage + 50%, Fire Rate + 30%";
-                    case 3: return "Level 3: Fire Rate + 50%";
-                    case 4: return "Level 4: Damage + 30%";
-                    case 5: return "Level 5: Damage + 20%, Fire Rate + 50%";
+                    case 3: return "Level 3: Fire Rate + 50%, Pierce Chance + 10%";
+                    case 4: return "Level 4: Damage + 30%, Pierce Chance + 10%";
+                    case 5: return "MAX LEVEL: Damage + 20%, Fire Rate + 50%, Pierce Chance + 15%";
                     default: return "No upgrade available";
                 }
 
@@ -549,7 +584,7 @@ public class UpgradeManager : MonoBehaviour
                     case 2: return "Level 2: Healing + 30%, Healing Rate + 20%";
                     case 3: return "Level 3: Healing + 20%";
                     case 4: return "Level 4: Healing + 10, Move Speed + 20%";
-                    case 5: return "Level 5: Healing Rate + 25%, Healing Amount + 30%";
+                    case 5: return "MAX LEVEL: Healing Rate + 25%, Healing Amount + 30%";
                     default: return "No upgrade available.";
                 }
 
@@ -561,7 +596,7 @@ public class UpgradeManager : MonoBehaviour
                     case 2: return "Level 2: Explosion Damage + 25%, Fire Rate + 20%";
                     case 3: return "Level 3: Explosion Damage + 10%, Speed + 25%";
                     case 4: return "Level 4: Explosion Damage + 25%";
-                    case 5: return "Level 5: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
+                    case 5: return "MAX LEVEL: Explosion Damage + 50%, Fire Rate + 30%, Speed + 25%";
                     default: return "No upgrade available.";
                 }
             case "Projectile Shield":
@@ -569,8 +604,8 @@ public class UpgradeManager : MonoBehaviour
                 {
                     case 0: return "Unlock:  Summon a shield that rotates around you";
                     case 1: return "Level 1: Hits + 1";
-                    case 2: return "Level 2: Hits + 1, Recharge time - 10%";
-                    case 3: return "Level 3: Hits + 1, Recharge time - 20%";
+                    case 2: return "Level 2: Hits + 1, Recharge time - 25%";
+                    case 3: return "Level 3: Hits + 2, Recharge time - 50%";
                     default: return "No upgrade available.";
                 }
 
@@ -736,6 +771,21 @@ public class UpgradeManager : MonoBehaviour
         {
             drone.damage = Mathf.RoundToInt(drone.damage * percentage);
             Debug.Log($"Player {playerNumber}'s drone damage increased!");
+        }
+        else
+        {
+            Debug.Log("No drone found in inventory.");
+        }
+    }
+
+    private void IncreaseDronePierce(int playerNumber, float percentage)
+    {
+        ShootingDrone drone = FindItemInInventory<ShootingDrone>(playerNumber);
+
+        if (drone != null)
+        {
+            drone.pierceChance = percentage;
+
         }
         else
         {

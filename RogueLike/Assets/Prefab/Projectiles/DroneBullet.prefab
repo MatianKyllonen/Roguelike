@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3870821871730398226}
   - component: {fileID: 8104010533157741753}
   - component: {fileID: 4601925002144298980}
-  - component: {fileID: 4573930005893066568}
   - component: {fileID: 19443344293941592}
+  - component: {fileID: -3219842744353118960}
   m_Layer: 0
   m_Name: DroneBullet
   m_TagString: Untagged
@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.79622644, g: 0.31193691, b: 0.286942, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3d64ca92ecdc0364ab84378a3a1b8e1b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -151,20 +151,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &4573930005893066568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2666669992267467572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddf048e1405f1e94f990b690c6f8d43c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 50
-  playerNumber: 0
 --- !u!96 &19443344293941592
 TrailRenderer:
   serializedVersion: 3
@@ -278,6 +264,21 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &-3219842744353118960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2666669992267467572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2ee1447c47eb74c98d6904e3f4401d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 50
+  playerNumber: 0
+  pierceChance: 10
 --- !u!1 &7710139347470402527
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,7 +327,7 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
-  m_Color: {r: 1, g: 0.3423015, b: 0.21568626, a: 1}
+  m_Color: {r: 1, g: 0.21568626, b: 0.23860586, a: 1}
   m_Intensity: 0.5
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0

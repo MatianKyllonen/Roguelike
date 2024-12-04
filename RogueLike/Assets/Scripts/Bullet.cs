@@ -6,6 +6,8 @@ public class Bullet : MonoBehaviour
 {
     public int damage = 50;
     public int playerNumber; // Track which player fired this bullet
+    public Movement player;
+    public float lifeStealChance = 0f;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -24,7 +26,16 @@ public class Bullet : MonoBehaviour
                 // Check if enemy is dead and update kill stats
                 if (enemy.health <= 0)
                 {
-                    Gamemanager.instance.UpdatePlayerStats(playerNumber, 1, 0, 0, 0); // Add 1 to kills
+                    Gamemanager.instance.UpdatePlayerStats(playerNumber, 1, 0, 0, 0); 
+                }
+                if(lifeStealChance > 0)
+                {
+                    if(Random.Range(0, 100) < lifeStealChance)
+                    {
+                        int healingAmount = Mathf.RoundToInt(damage / 5);
+                        player.Heal(healingAmount);
+                        Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 0, healingAmount); 
+                    }
                 }
             }
 

@@ -15,6 +15,7 @@ public class ShootingDrone : MonoBehaviour
 
     private float nextFireTime = 0f;
     public int playerNumber;
+    public float pierceChance = 10f;
 
     private void Start()
     {
@@ -65,14 +66,18 @@ public class ShootingDrone : MonoBehaviour
     {
         GameObject bullet = Instantiate(bulletPrefab, gunMuzzle.position, Quaternion.identity);
 
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        PiercingBulllet bulletScript = bullet.GetComponent<PiercingBulllet>();
         if (bulletScript != null)
         {
+            bulletScript.pierceChance = pierceChance;
             bulletScript.damage = Mathf.RoundToInt(damage);
             bulletScript.playerNumber = playerNumber; 
         }
 
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        bullet.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
