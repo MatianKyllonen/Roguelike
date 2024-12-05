@@ -165,6 +165,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 50
   playerNumber: 0
+  player: {fileID: 0}
+  lifeStealEffect: {fileID: 7768825774423126407, guid: 506ce0be04732b24a9de8f990ad611db, type: 3}
+  lifeStealChance: 100
 --- !u!96 &19443344293941592
 TrailRenderer:
   serializedVersion: 3

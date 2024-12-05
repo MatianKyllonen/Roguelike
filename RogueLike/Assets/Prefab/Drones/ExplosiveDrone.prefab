@@ -398,7 +398,7 @@ MonoBehaviour:
   bulletForce: 10
   damage: 15
   damageMultiplier: 1
-  explosionRadius: 3
+  explosionRadius: 2.3
   explosionDamage: 20
   bulletPrefab: {fileID: 2666669992267467572, guid: 148a41cea358d0944bb21dca1f875dcc, type: 3}
   gunMuzzle: {fileID: 407879213137469907}
