@@ -226,7 +226,7 @@ public class BasicEnemy : MonoBehaviour
     void Die()
     {
         
-        if(zesty != null && Random.Range(0, 1000) <= zestChance)
+        if(zesty != null && Random.Range(0, 600) <= zestChance)
             Instantiate(zesty, transform.position, Quaternion.identity);
         else if (Random.Range(0, 100) >= 50 && orb != null)
              Instantiate(orb, transform.position, Quaternion.identity);

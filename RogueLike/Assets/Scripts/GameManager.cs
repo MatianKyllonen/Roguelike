@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -28,8 +29,11 @@ public class Gamemanager : MonoBehaviour
     public GameObject gameOverStatsPlayer1;
     public GameObject gameOverStatsPlayer2;
 
+    public GameObject pauseMenu;
+
     public GameObject fade;
     private bool gameLost;
+    private bool gamePaused = false;
 
     // Stats tracking for two players
     private List<int[]> playerStats = new List<int[]>
@@ -51,8 +55,27 @@ public class Gamemanager : MonoBehaviour
         upgradesManager = FindFirstObjectByType<UpgradeManager>();
     }
 
+    private void FixedUpdate()
+    {
+        if (gamePaused)
+        {
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                if (Input.GetAxis("Horizontal1") != 0 || Input.GetAxis("Vertical1") != 0)
+                    EventSystem.current.SetSelectedGameObject(GameObject.Find("ResumeButton"));
+            }
+            if (Input.GetButtonDown("Start"))
+            {
+                QuitToMenu();
+            }
+
+        }
+    }
+
     private void Update()
     {
+
+
         // Update the timer
         UpdateTimer();
 
@@ -61,14 +84,15 @@ public class Gamemanager : MonoBehaviour
         {
             StartCoroutine(GameRestart());
         }
-        /*if (Input.GetKeyDown(KeyCode.L) && !upgradesManager.shopOpen)
+        if (Input.GetKeyDown(KeyCode.L) && !upgradesManager.shopOpen)
         {
             LevelUp();
-        }*/
+        }
 
         if (Input.GetButtonDown("Start"))
         {
-            StartCoroutine(GameRestart());
+            PauseGame();
+            
         }
     }
 
@@ -228,5 +252,27 @@ public class Gamemanager : MonoBehaviour
         {
             Debug.Log($"Player {i + 1} Stats - Kills: {playerStats[i][0]}, Damage: {playerStats[i][1]}, Revives: {playerStats[i][2]}, Healing: {playerStats[i][3]}");
         }
+    }
+
+    public void PauseGame()
+    {
+        gamePaused = true;
+        Time.timeScale = 0;
+        pauseMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(GameObject.Find("ResumeButton"));
+    }
+
+    public void UnPauseGame()
+    {
+        gamePaused = false;
+        Time.timeScale = 1f;
+        pauseMenu.SetActive(false);      
+    }
+
+    public void QuitToMenu()
+    {
+        gamePaused = false;
+        Time.timeScale = 1f;
+        StartCoroutine(GameRestart());
     }
 }

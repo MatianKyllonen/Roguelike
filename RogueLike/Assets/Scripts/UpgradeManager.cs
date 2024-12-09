@@ -175,7 +175,7 @@ public class UpgradeManager : MonoBehaviour
 
         // Check the player's inventory for upgradable items
         Upgrade upgradableFromInventory = GetUpgradableItemFromInventory(playerNumber);
-        if (upgradableFromInventory != null)
+        if (upgradableFromInventory != null && Random.Range(0, 100) < 50)
         {
             // Add the upgradable inventory item as the first item
             selectedUpgrades.Add(upgradableFromInventory);
@@ -560,7 +560,7 @@ public class UpgradeManager : MonoBehaviour
 
             case "Life Steal":
                 if(upgradeLevel == 0)
-                    return "Unlock: 3% Chance to drain enemy health when shooting";
+                    return "Unlock: 3% Chance to gain health from damaging enemies";
                 else
                     return $"Level {upgradeLevel + 1}: Life Steal Chance + {2 * (upgradeLevel + 1)}%";
 

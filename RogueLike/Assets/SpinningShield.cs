@@ -39,7 +39,7 @@ public class SpinningShield : MonoBehaviour
             shieldCenter.gameObject.transform.RotateAround(target.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         }
 
-        if(!isActive)
+        if(health < maxHealth)
         {
             if (0 < regenTimer)
             {
@@ -48,7 +48,7 @@ public class SpinningShield : MonoBehaviour
             }
             else
             {
-                EnableShield();
+                RegenShield();
             }
 
         }
@@ -67,8 +67,10 @@ public class SpinningShield : MonoBehaviour
     {
         Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer("EnemyProjectile") && isActive)
-        {         
+        {
+            shieldBarUI.SetActive(true);
             health -= 1;
+            regenTimer = regenTime;
             CheckSprite();
             Debug.Log(health);
             Destroy(collision.gameObject);
@@ -95,9 +97,9 @@ public class SpinningShield : MonoBehaviour
         shieldBarUI.SetActive(true);
     }
 
-    public void EnableShield()
-    {    
-        health = maxHealth;
+    public void RegenShield()
+    {
+        health += 1;
         isActive = true;
         shield.enabled = true;
         shieldSprite.enabled = true;
