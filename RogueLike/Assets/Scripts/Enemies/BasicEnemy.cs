@@ -18,7 +18,7 @@ public class BasicEnemy : MonoBehaviour
     // Sprite-related variables
     private SpriteRenderer spriteRenderer; // The sprite renderer to change the sprite and color
     private Color originalColor;           // The original color of the sprite for resetting
-    public float flashDuration = 0.1f;     // Duration of the flash
+    public float flashDuration = 0.2f;     // Duration of the flash
     private float flashTimer = 0f;         // Timer to track the flash duration
 
     public GameObject spawnedObject;
@@ -178,6 +178,7 @@ public class BasicEnemy : MonoBehaviour
     {
         health -= damage;
         Instantiate(hitParticle, transform.position, Quaternion.identity);
+        audioSource.pitch = Random.Range(0.8f, 1.2f);
         audioSource.PlayOneShot(hurtSound, 0.2f);
 
         // Trigger the red flash when the enemy takes damage

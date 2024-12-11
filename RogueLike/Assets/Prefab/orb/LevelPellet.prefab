@@ -356,6 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xpAmount: 10
+  pickupSound: {fileID: 8300000, guid: 980191ac06c626e409c92196140f0e06, type: 3}
   detectionRadius: 2
   moveSpeed: 10
 --- !u!1 &4759019763479352048

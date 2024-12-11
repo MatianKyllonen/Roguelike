@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -253,6 +254,10 @@ public class UpgradeManager : MonoBehaviour
                 gun.fireRateMultiplier *= 1.2f;
                 break;
 
+            case "Dash Cooldown":
+                movement.dashCooldown /= 1.3f;
+                break;
+
             case "Move Speed":
                 movement.moveSpeedMultiplier *= 1.1f;
                 break;
@@ -260,7 +265,7 @@ public class UpgradeManager : MonoBehaviour
                 if (level == 0)
                     gun.lifeStealChance = 3;
                 else
-                    gun.lifeStealChance *= 1.2f;
+                    gun.lifeStealChance *= 1.25f;
                 break;
 
             case "Piercing Drone":
@@ -448,6 +453,7 @@ public class UpgradeManager : MonoBehaviour
 
     public void OpenShop()
     {
+        Gamemanager.instance.canPause = false;
         currentUpgrades1 = GetRandomUpgrades(3, 1);
         if (currentUpgrades1.Length > 0)
         {
@@ -552,6 +558,9 @@ public class UpgradeManager : MonoBehaviour
             case "Damage":
                 return $"Level {upgradeLevel + 1}: Damage + {30 * (upgradeLevel + 1)}%";
 
+            case "Dash Cooldown":
+                return $"Level {upgradeLevel + 1}: Dash cooldown - {30 * (upgradeLevel + 1)}%";
+
             case "Fire Rate":
                 return $"Level {upgradeLevel + 1}: Fire Rate + {20 * (upgradeLevel + 1)}%";
 
@@ -562,7 +571,7 @@ public class UpgradeManager : MonoBehaviour
                 if(upgradeLevel == 0)
                     return "Unlock: 3% Chance to gain health from damaging enemies";
                 else
-                    return $"Level {upgradeLevel + 1}: Life Steal Chance + {2 * (upgradeLevel + 1)}%";
+                    return $"Level {upgradeLevel + 1}: Life Steal Chance {2 * (upgradeLevel + 1)}%";
 
             case "Piercing Drone":
                 switch (upgradeLevel)
@@ -602,7 +611,7 @@ public class UpgradeManager : MonoBehaviour
             case "Projectile Shield":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Unlock:  Summon a shield that rotates around you";
+                    case 0: return "Unlock:  Summon a shield that rotates around you and heals you when it takes damage";
                     case 1: return "Level 1: Hits + 1";
                     case 2: return "Level 2: Hits + 1, Recharge time - 25%";
                     case 3: return "Level 3: Hits + 2, Recharge time - 50%";
@@ -680,6 +689,7 @@ public class UpgradeManager : MonoBehaviour
     {
 
         yield return new WaitForSeconds(0.3f);
+        Gamemanager.instance.canPause = true;
         upgradeScreen.SetActive(false);
         shopOpen = false;
     }

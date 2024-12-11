@@ -8,6 +8,7 @@ public class SpinningShield : MonoBehaviour
     public int maxHealth = 1;
     public float regenTime = 30f;
     private float regenTimer = 0;
+    public int healingAmount = 5;
 
     private int health = 1;
     private bool isActive = true;
@@ -18,6 +19,7 @@ public class SpinningShield : MonoBehaviour
     public GameObject shieldCenter;
     public Sprite brokenSprite;
     private Sprite defaulSprite;
+    private Movement player;
 
     [Header("Rotation Settings")]
     public Transform target;
@@ -25,13 +27,16 @@ public class SpinningShield : MonoBehaviour
 
     public GameObject shieldBarUI;
     public Slider shieldSlider;
+
     void Start()
     {
         isActive = true;
         shield = GetComponent<BoxCollider2D>();
         shieldSprite = GetComponent<SpriteRenderer>();
         defaulSprite = shieldSprite.sprite;
+        player = target.GetComponent<Movement>();
     }
+
     private void Update()
     {
         if (target != null)
@@ -39,18 +44,21 @@ public class SpinningShield : MonoBehaviour
             shieldCenter.gameObject.transform.RotateAround(target.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         }
 
-        if(health < maxHealth)
+        if (health < maxHealth)
         {
-            if (0 < regenTimer)
+            if (regenTimer > 0)
             {
                 regenTimer -= Time.deltaTime;
                 shieldSlider.value = regenTimer / regenTime;
             }
             else
             {
-                RegenShield();
+                // Heal only once per regen cycle
+                if (health < maxHealth)
+                {
+                    RegenShield();
+                }
             }
-
         }
 
         if (shieldBarUI != null)
@@ -60,7 +68,6 @@ public class SpinningShield : MonoBehaviour
             shieldBarUI.transform.position = barPosition;
             shieldBarUI.transform.rotation = Quaternion.identity;
         }
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -68,9 +75,14 @@ public class SpinningShield : MonoBehaviour
         Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer("EnemyProjectile") && isActive)
         {
+            player.Heal(healingAmount);
+            Gamemanager.instance.UpdatePlayerStats(player.playerNumber, 0, 0, 0, healingAmount);
             shieldBarUI.SetActive(true);
             health -= 1;
-            regenTimer = regenTime;
+            if (regenTimer <= 0) // Start regen timer only if it's not already running
+            {
+                regenTimer = regenTime;
+            }
             CheckSprite();
             Debug.Log(health);
             Destroy(collision.gameObject);
@@ -99,12 +111,21 @@ public class SpinningShield : MonoBehaviour
 
     public void RegenShield()
     {
-        health += 1;
+        // Heal by 1 point per cycle, not all at once
+        if (health < maxHealth)
+        {
+            health += 1;
+        }
+
         isActive = true;
         shield.enabled = true;
         shieldSprite.enabled = true;
         CheckSprite();
-        shieldBarUI.SetActive(false);
+
+        if (health >= maxHealth)
+        {
+            shieldBarUI.SetActive(false); // Hide the shield bar when fully healed
+        }
     }
 
     private void CheckSprite()

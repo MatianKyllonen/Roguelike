@@ -7,6 +7,9 @@ public class LevelPellet : MonoBehaviour
     private Gamemanager gm;
     public int xpAmount = 10;
 
+    public AudioClip pickupSound;
+    private AudioSource audioSource;
+
     // New variables for floating toward the closest player
     public float detectionRadius = 5f;  // Distance at which pellet starts moving toward player
     public float moveSpeed = 3f;        // Speed at which pellet moves toward player
@@ -17,6 +20,7 @@ public class LevelPellet : MonoBehaviour
     void Start()
     {
 
+        audioSource = FindObjectOfType<Movement>().gameObject.GetComponent<AudioSource>();
         Destroy(gameObject, 90f);
         gm = Gamemanager.instance;
 
@@ -72,6 +76,8 @@ public class LevelPellet : MonoBehaviour
     {
         if (collision.CompareTag("Player")) // Ensure it only triggers when colliding with a player
         {
+            audioSource.pitch = (Random.Range(0.8f, 1.2f));
+            audioSource.PlayOneShot(pickupSound, 0.5f);
             gm.IncreaseXp(xpAmount);
             Destroy(gameObject); // Destroy the pellet after it's collected
         }

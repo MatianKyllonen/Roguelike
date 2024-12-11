@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +23,7 @@ public class Movement : MonoBehaviour
     Rigidbody2D rb;
 
     public Slider healthbar;
+    public Slider damageTookSlider;
     public TextMeshProUGUI healthCount;
     private Gun shooting;
 
@@ -46,8 +48,9 @@ public class Movement : MonoBehaviour
 
     public GameObject playerClone;
 
-    private AudioSource audioSoure;
+    private AudioSource audioSource;
     public AudioClip dashSound;
+    public AudioClip hurtSound;
 
     private Color originalColor;          // The original color of the sprite for resetting
     public float flashDuration = 0.1f;    // Duration of the flash
@@ -70,7 +73,7 @@ public class Movement : MonoBehaviour
     private void Start()
     {
         upgradeManager = FindFirstObjectByType<UpgradeManager>();
-        audioSoure = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         shooting = GetComponent<Gun>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -214,8 +217,9 @@ public class Movement : MonoBehaviour
 
     // Dash method remains unchanged
     void Dash()
-    {   
-        audioSoure.PlayOneShot(dashSound, 0.2f);
+    {
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(dashSound, 0.2f);
         dashing = true;
         StartCoroutine(ResetVelocityAfterDash(dashTime));
     }
@@ -256,9 +260,14 @@ public class Movement : MonoBehaviour
 
         health -= damage;
 
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(hurtSound, 0.2f);
+
         FindObjectOfType<ScreenShake>()?.TriggerShake();
-        FlashRed();
+        FlashRed();     
         CalculateHealth();
+        StartCoroutine(ShowcaseDamage(healthbar.value));
+
 
         if (health <= 0)
         {
@@ -343,6 +352,13 @@ public class Movement : MonoBehaviour
             Destroy(clone, 0.2f);
             yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    IEnumerator ShowcaseDamage(float Newvalue)
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        damageTookSlider.value = Newvalue;
     }
 
     void Revive()

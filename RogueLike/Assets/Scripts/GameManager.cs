@@ -13,7 +13,7 @@ public class Gamemanager : MonoBehaviour
     private int level = 0;
     public float nextlevelXp = 100;
     private int currentXp = 0;
-    private float xpMultiplier = 1.3f;
+    private float xpMultiplier = 1.2f;
 
     private UpgradeManager upgradesManager;
 
@@ -30,10 +30,12 @@ public class Gamemanager : MonoBehaviour
     public GameObject gameOverStatsPlayer2;
 
     public GameObject pauseMenu;
+    public GameObject resumeButton;
 
     public GameObject fade;
     private bool gameLost;
     private bool gamePaused = false;
+    public bool canPause = true;
 
     // Stats tracking for two players
     private List<int[]> playerStats = new List<int[]>
@@ -62,7 +64,7 @@ public class Gamemanager : MonoBehaviour
             if (EventSystem.current.currentSelectedGameObject == null)
             {
                 if (Input.GetAxis("Horizontal1") != 0 || Input.GetAxis("Vertical1") != 0)
-                    EventSystem.current.SetSelectedGameObject(GameObject.Find("ResumeButton"));
+                    EventSystem.current.SetSelectedGameObject(resumeButton);
             }
             if (Input.GetButtonDown("Start"))
             {
@@ -89,7 +91,7 @@ public class Gamemanager : MonoBehaviour
             LevelUp();
         }
 
-        if (Input.GetButtonDown("Start"))
+        if (Input.GetButtonDown("Start") && canPause)
         {
             PauseGame();
             
@@ -147,6 +149,7 @@ public class Gamemanager : MonoBehaviour
     public void GameLost()
     {
         // Stop the music
+        canPause = false;
         music.GetComponent<AudioSource>().Stop();
 
         StartCoroutine(GamelostDelay());
@@ -257,9 +260,9 @@ public class Gamemanager : MonoBehaviour
     public void PauseGame()
     {
         gamePaused = true;
-        Time.timeScale = 0;
         pauseMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(GameObject.Find("ResumeButton"));
+        EventSystem.current.SetSelectedGameObject(resumeButton);
+        Time.timeScale = 0f;
     }
 
     public void UnPauseGame()
