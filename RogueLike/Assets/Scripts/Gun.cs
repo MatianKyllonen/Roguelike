@@ -90,7 +90,7 @@ public class Gun : MonoBehaviour
         Destroy(bullet, 2f);
 
         audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(shotSound, 0.2f);
+        audioSource.PlayOneShot(shotSound, 0.5f);
 
         Vector2 direction = (target.transform.position - gunMuzzle.position).normalized;
 

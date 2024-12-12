@@ -60,6 +60,10 @@ public class SpinningShield : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            isActive = true; 
+        }
 
         if (shieldBarUI != null)
         {

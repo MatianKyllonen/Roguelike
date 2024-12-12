@@ -430,7 +430,7 @@ public class UpgradeManager : MonoBehaviour
                 else if (level == 2)
                 {
                     IncreaseShieldHealth(playerNumber);
-                    DecreaseShieldCoolDown(playerNumber, 25);
+                    DecreaseShieldCoolDown(playerNumber, 1.25f);
 
                 }
                 else if (level == 3)
@@ -438,7 +438,7 @@ public class UpgradeManager : MonoBehaviour
                     IncreaseShieldHealth(playerNumber);
                     IncreaseShieldHealth(playerNumber);
 
-                    DecreaseShieldCoolDown(playerNumber, 50);
+                    DecreaseShieldCoolDown(playerNumber, 1.25f);
                 }
                 break;
 
@@ -614,7 +614,7 @@ public class UpgradeManager : MonoBehaviour
                     case 0: return "Unlock:  Summon a shield that rotates around you and heals you when it takes damage";
                     case 1: return "Level 1: Hits + 1";
                     case 2: return "Level 2: Hits + 1, Recharge time - 25%";
-                    case 3: return "Level 3: Hits + 2, Recharge time - 50%";
+                    case 3: return "Level 3: Hits + 2, Recharge time - 25%";
                     default: return "No upgrade available.";
                 }
 

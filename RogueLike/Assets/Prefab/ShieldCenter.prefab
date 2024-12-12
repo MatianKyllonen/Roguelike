@@ -520,7 +520,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 2
   regenTime: 20
-  healingAmount: 10
+  healingAmount: 6
   shieldCenter: {fileID: 6741205291052891181}
   brokenSprite: {fileID: 21300000, guid: 42bd2d34912c0c74da4317e474ebd71d, type: 3}
   target: {fileID: 0}

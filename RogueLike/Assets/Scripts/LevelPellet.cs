@@ -76,8 +76,8 @@ public class LevelPellet : MonoBehaviour
     {
         if (collision.CompareTag("Player")) // Ensure it only triggers when colliding with a player
         {
-            audioSource.pitch = (Random.Range(0.8f, 1.2f));
-            audioSource.PlayOneShot(pickupSound, 0.5f);
+            audioSource.pitch = (Random.Range(0.9f, 1.1f));
+            audioSource.PlayOneShot(pickupSound, 0.2f);
             gm.IncreaseXp(xpAmount);
             Destroy(gameObject); // Destroy the pellet after it's collected
         }

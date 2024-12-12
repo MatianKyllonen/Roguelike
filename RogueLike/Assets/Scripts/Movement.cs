@@ -219,7 +219,7 @@ public class Movement : MonoBehaviour
     void Dash()
     {
         audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(dashSound, 0.2f);
+        audioSource.PlayOneShot(dashSound, 0.45f);
         dashing = true;
         StartCoroutine(ResetVelocityAfterDash(dashTime));
     }
@@ -261,7 +261,7 @@ public class Movement : MonoBehaviour
         health -= damage;
 
         audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(hurtSound, 0.2f);
+        audioSource.PlayOneShot(hurtSound, 0.5f);
 
         FindObjectOfType<ScreenShake>()?.TriggerShake();
         FlashRed();     
@@ -376,7 +376,7 @@ public class Movement : MonoBehaviour
         reviveBarUI.SetActive(false);
 
         invincibility = true;
-        invincibilityTimer = 0.4f;
+        invincibilityTimer = 1f;
     }
 
     void CalculateHealth()
