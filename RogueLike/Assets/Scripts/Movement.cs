@@ -13,6 +13,7 @@ public class Movement : MonoBehaviour
     public float moveSpeedMultiplier = 1f;
     public int playerNumber = 1;
     public bool knocked;
+    public float damageTakenMultiplier = 1f;
 
     private Vector2 movementInput;
     private float horizontalMove;
@@ -22,6 +23,8 @@ public class Movement : MonoBehaviour
     public Sprite knockdownSprite;
     Rigidbody2D rb;
 
+    public bool greedyCollector;
+
     public Slider healthbar;
     public Slider damageTookSlider;
     public TextMeshProUGUI healthCount;
@@ -30,6 +33,7 @@ public class Movement : MonoBehaviour
     public float reviveDistance = 1.5f;
     public float reviveTime = 3f;
     private float reviveCounter = 0f;
+    private float originalMoveSpeedMultiplier;
 
     
 
@@ -105,8 +109,8 @@ public class Movement : MonoBehaviour
             {
                 sploogeSprite.SetActive(false);
                 splooged = false; // Automatically remove splooged state
-                moveSpeedMultiplier = 1f; // Reset move speed multiplier
-                dashBarUI.SetActive(true); // Re-enable dash UI
+                moveSpeedMultiplier = originalMoveSpeedMultiplier; // Reset move speed multiplier
+                dashBarUI.SetActive(true); // Re-enable dash U
             }
         }
 
@@ -207,6 +211,7 @@ public class Movement : MonoBehaviour
         if (splooged)
             return;
 
+        originalMoveSpeedMultiplier = moveSpeedMultiplier;
         sploogeSprite.SetActive(true);
         splooged = true;
         sploogedTimer = sploogedDuration;    // Set the duration
@@ -258,7 +263,7 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        health -= damage;
+        health -= (Mathf.RoundToInt(damage * damageTakenMultiplier));
 
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.PlayOneShot(hurtSound, 0.5f);
@@ -278,15 +283,24 @@ public class Movement : MonoBehaviour
         invincibilityTimer = 0.1f;
     }
 
-    public void Heal(float healingAmount)
+    public void Heal(float healingAmount, bool isGem = false)
     {
-        health += Mathf.RoundToInt(healingAmount);
-        FlashGreen();
-
         if (health > maxHealth)
-            health = maxHealth;
+        {
+            if (greedyCollector)
+            {
+                health += Mathf.RoundToInt(healingAmount);
+            }
+            else if (greedyCollector && isGem)
+            {
+                health += Mathf.RoundToInt(2);
+                
+            }
 
-        CalculateHealth();
+            FlashGreen();
+            CalculateHealth();
+        }
+
     }
 
     void Die()

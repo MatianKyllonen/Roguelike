@@ -33,6 +33,7 @@ public class Gamemanager : MonoBehaviour
     public GameObject resumeButton;
 
     public GameObject fade;
+    private bool gameOver;
     private bool gameLost;
     private bool gamePaused = false;
     public bool canPause = true;
@@ -148,6 +149,9 @@ public class Gamemanager : MonoBehaviour
 
     public void GameLost()
     {
+        if (gameOver)
+            return;
+        gameOver = true;
         // Stop the music
         canPause = false;
         music.GetComponent<AudioSource>().Stop();
@@ -162,6 +166,7 @@ public class Gamemanager : MonoBehaviour
         gameOverScreen.SetActive(true); // Enable Game Over screen
         yield return new WaitForSeconds(1.2f); // Additional delay before showing stats
         DisplayGameOverStats(); // Show stats for Player 1 and Player 2
+        gameOver = false;
         gameLost = true;
     }
 

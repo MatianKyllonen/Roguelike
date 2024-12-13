@@ -8,6 +8,7 @@ public class ShootingDrone : MonoBehaviour
 
     public float bulletForce = 20f;
     public float damage = 25f;
+    private Gun playerGun;
 
     public GameObject bulletPrefab;
     public Transform gunMuzzle;
@@ -21,7 +22,9 @@ public class ShootingDrone : MonoBehaviour
     {
         // Get the player number from the drone's target
         playerNumber = GetComponent<DroneBasic>().target.GetComponent<Movement>().playerNumber;
+        playerGun = GetComponent<DroneBasic>().target.GetComponent<Gun>();
     }
+
 
     void Update()
     {
@@ -70,7 +73,7 @@ public class ShootingDrone : MonoBehaviour
         if (bulletScript != null)
         {
             bulletScript.pierceChance = pierceChance;
-            bulletScript.damage = Mathf.RoundToInt(damage);
+            bulletScript.damage = Mathf.RoundToInt(damage * playerGun.damageMultiplier);
             bulletScript.playerNumber = playerNumber; 
         }
 

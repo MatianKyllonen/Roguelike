@@ -11,6 +11,7 @@ public class ExplosiveShotDrone : MonoBehaviour
     public float damageMultiplier = 1f;
     public float explosionRadius = 5f;
     public float explosionDamage = 50f;
+    private Gun playerGun;
 
     public GameObject bulletPrefab;
     public Transform gunMuzzle;
@@ -23,6 +24,7 @@ public class ExplosiveShotDrone : MonoBehaviour
     {
         // Get the player number from the drone's target
         playerNumber = GetComponent<DroneBasic>().target.GetComponent<Movement>().playerNumber;
+        playerGun = GetComponent<DroneBasic>().target.GetComponent<Gun>();
     }
 
     void Update()
@@ -82,7 +84,7 @@ public class ExplosiveShotDrone : MonoBehaviour
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript != null)
         {
-            bulletScript.damage = Mathf.RoundToInt(damage * damageMultiplier);
+            bulletScript.damage = Mathf.RoundToInt(damage * playerGun.damageMultiplier);
             bulletScript.playerNumber = playerNumber; // Assign player number
         }
 

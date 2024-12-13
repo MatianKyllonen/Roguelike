@@ -184,29 +184,59 @@ public class UpgradeManager : MonoBehaviour
 
         // Filter upgrades that the player hasn't maxed out, excluding the chosen inventory item
         List<Upgrade> availableUpgrades = new List<Upgrade>();
+        List<Upgrade> cursedUpgrades = new List<Upgrade>(); // List for cursed upgrades
+
         foreach (var upgrade in upgrades)
         {
             if (playerUpgradeLevels[playerNumber][upgrade.name] < upgrade.maxlevel && upgrade != upgradableFromInventory)
             {
-                availableUpgrades.Add(upgrade);
+                if (upgrade.isCursed)
+                {
+                    cursedUpgrades.Add(upgrade); // Add cursed upgrades to a separate list
+                }
+                else
+                {
+                    availableUpgrades.Add(upgrade); // Add non-cursed upgrades to another list
+                }
             }
         }
 
-        // Shuffle the available upgrades
+        // Shuffle non-cursed upgrades
         for (int i = 0; i < availableUpgrades.Count; i++)
         {
             int randomIndex = Random.Range(i, availableUpgrades.Count);
-            // Swap current element with the randomly chosen element
             var temp = availableUpgrades[i];
             availableUpgrades[i] = availableUpgrades[randomIndex];
             availableUpgrades[randomIndex] = temp;
         }
 
-        // Fill the remaining slots with random upgrades
-        int remainingSlots = count - selectedUpgrades.Count;
-        for (int i = 0; i < remainingSlots && i < availableUpgrades.Count; i++)
+        // Shuffle cursed upgrades (optional)
+        for (int i = 0; i < cursedUpgrades.Count; i++)
         {
-            selectedUpgrades.Add(availableUpgrades[i]);
+            int randomIndex = Random.Range(i, cursedUpgrades.Count);
+            var temp = cursedUpgrades[i];
+            cursedUpgrades[i] = cursedUpgrades[randomIndex];
+            cursedUpgrades[randomIndex] = temp;
+        }
+
+        // Fill the remaining slots with non-cursed and cursed upgrades
+        int remainingSlots = count - selectedUpgrades.Count;
+        int cursedChance = 10; // Example cursed item chance (in percentage)
+
+        for (int i = 0; i < remainingSlots; i++)
+        {
+            if (Random.Range(0, 100) < cursedChance && cursedUpgrades.Count > 0)
+            {
+                // Give cursed items a chance to appear, but it's lower than the non-cursed items
+                selectedUpgrades.Add(cursedUpgrades[0]);
+                cursedUpgrades.RemoveAt(0); // Remove the cursed upgrade after adding it
+            }
+            else if (availableUpgrades.Count > 0)
+            {
+                // If there's room, add a non-cursed upgrade
+                selectedUpgrades.Add(availableUpgrades[0]);
+                availableUpgrades.RemoveAt(0); // Remove the selected upgrade
+            }
         }
 
         return selectedUpgrades.ToArray();
@@ -245,9 +275,30 @@ public class UpgradeManager : MonoBehaviour
 
         switch (upgrade.name)
         {
+            case "Greedy Collector":
+                movement.greedyCollector = true;
+                break;
+
+
+            case "Double Damage":
+                gun.damageMultiplier += 0.5f;
+                movement.damageTakenMultiplier += 1f;
+                break;
+
+            case "Swift Feet":
+                movement.maxHealth /= 2;
+                movement.moveSpeedMultiplier += 0.5f;
+                movement.Heal(100);
+                break;
+
+            case "Iron Fortress":
+                movement.maxHealth *= 2;
+                movement.moveSpeedMultiplier -= 0.5f;
+                movement.Heal(100);
+                break;
 
             case "Damage":
-                gun.damageMultiplier *= 1.3f;
+                gun.damage *= 1.3f;
                 break;
 
             case "Fire Rate":
@@ -259,13 +310,13 @@ public class UpgradeManager : MonoBehaviour
                 break;
 
             case "Move Speed":
-                movement.moveSpeedMultiplier *= 1.1f;
+                movement.moveSpeed *= 1.1f;
                 break;
             case "Life Steal":
                 if (level == 0)
                     gun.lifeStealChance = 3;
                 else
-                    gun.lifeStealChance *= 1.25f;
+                    gun.lifeStealChance *= 1.3f;
                 break;
 
             case "Piercing Drone":
@@ -555,6 +606,18 @@ public class UpgradeManager : MonoBehaviour
 
         switch (upgrade.name)
         {
+            case "More Damage":
+                return $"Curse: Increase damage dealt and damage taken";
+
+            case "Swift Feet":
+                return $"Curse: Increase movement speed but halve your health";
+
+            case "Greedy Collector":
+                return $"Curse: Collecting gems heal you, can't receive healing from anywhere else";
+
+            case "Iron Fortress":
+                return $"Curse: Double your current health but halve your movement speed";
+
             case "Damage":
                 return $"Level {upgradeLevel + 1}: Damage + {30 * (upgradeLevel + 1)}%";
 
@@ -611,7 +674,7 @@ public class UpgradeManager : MonoBehaviour
             case "Projectile Shield":
                 switch (upgradeLevel)
                 {
-                    case 0: return "Unlock:  Summon a shield that rotates around you and heals you when it takes damage";
+                    case 0: return "Unlock:  Summon a shield that rotates around you, heals you when blocking damage";
                     case 1: return "Level 1: Hits + 1";
                     case 2: return "Level 2: Hits + 1, Recharge time - 25%";
                     case 3: return "Level 3: Hits + 2, Recharge time - 25%";
@@ -757,6 +820,7 @@ public class UpgradeManager : MonoBehaviour
         if(shield != null)
         {
             shield.IncreaseHealth(1);
+            shield.ResetShield();
         }
     }
 
@@ -767,6 +831,7 @@ public class UpgradeManager : MonoBehaviour
         if (shield != null)
         {
             shield.regenTime = (shield.regenTime / percentage);
+            shield.ResetShield();
         }
     }
 
@@ -889,6 +954,7 @@ public class UpgradeManager : MonoBehaviour
 [System.Serializable]
 public class Upgrade
 {
+    public bool isCursed;
     public string name;
     public string description;
     public int maxlevel;

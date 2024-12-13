@@ -63,7 +63,7 @@ public class HomingProjectile : MonoBehaviour
         {
             float distance = Vector2.Distance(transform.position, player.transform.position);
 
-            if (distance < closestDistance)
+            if (distance < closestDistance && player.GetComponent<Movement>().knocked == false)
             {
                 closestDistance = distance;
                 nearestPlayer = player.transform;
