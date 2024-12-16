@@ -277,23 +277,24 @@ public class UpgradeManager : MonoBehaviour
         {
             case "Greedy Collector":
                 movement.greedyCollector = true;
+                movement.detectionRadius = 3.5f;
                 break;
 
 
-            case "Double Damage":
+            case "More Damage":
                 gun.damageMultiplier += 0.5f;
                 movement.damageTakenMultiplier += 1f;
                 break;
 
             case "Swift Feet":
                 movement.maxHealth /= 2;
-                movement.moveSpeedMultiplier += 0.5f;
+                movement.moveSpeedMultiplier += 0.35f;
                 movement.Heal(100);
                 break;
 
             case "Iron Fortress":
                 movement.maxHealth *= 2;
-                movement.moveSpeedMultiplier -= 0.5f;
+                gun.fireRateMultiplier -= 0.4f;
                 movement.Heal(100);
                 break;
 
@@ -302,7 +303,7 @@ public class UpgradeManager : MonoBehaviour
                 break;
 
             case "Fire Rate":
-                gun.fireRateMultiplier *= 1.2f;
+                gun.fireRate *= 1.2f;
                 break;
 
             case "Dash Cooldown":
@@ -581,8 +582,15 @@ public class UpgradeManager : MonoBehaviour
             {
                 if (child.gameObject.name == "Name")
                 {
+                    
                     TextMeshProUGUI textMeshPro = child.gameObject.GetComponent<TextMeshProUGUI>();
                     textMeshPro.text = upgrade.name;
+                    if (upgrade.isCursed)
+                    {
+                        textMeshPro.color = Color.red;
+                    }
+                    else
+                        textMeshPro.color = Color.white;
                 }
                 if (child.gameObject.name == "Description")
                 {
@@ -616,7 +624,7 @@ public class UpgradeManager : MonoBehaviour
                 return $"Curse: Collecting gems heal you, can't receive healing from anywhere else";
 
             case "Iron Fortress":
-                return $"Curse: Double your current health but halve your movement speed";
+                return $"Curse: Double your current health but reduce fire rate";
 
             case "Damage":
                 return $"Level {upgradeLevel + 1}: Damage + {30 * (upgradeLevel + 1)}%";

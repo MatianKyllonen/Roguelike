@@ -131,7 +131,7 @@ public class Gamemanager : MonoBehaviour
 
     void UpdateTimer()
     {
-        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true)
+        if (FindFirstObjectByType<UpgradeManager>().shopOpen == true || gameLost)
         {
             return;
         }
@@ -221,20 +221,71 @@ public class Gamemanager : MonoBehaviour
         if (killsObj != null)
         {
             killsObj.GetComponentInChildren<TextMeshProUGUI>().text = "Kills: " + stats[0].ToString(); // Update Kills
+            EnableCrownForStat("Kills", stats[0], killsObj);
         }
         if (damageObj != null)
         {
             damageObj.GetComponentInChildren<TextMeshProUGUI>().text = "Damage: " + stats[1].ToString(); // Update Damage
+            EnableCrownForStat("Damage", stats[1], damageObj);
         }
         if (revivesObj != null)
         {
             revivesObj.GetComponentInChildren<TextMeshProUGUI>().text = "Revives: " + stats[2].ToString(); // Update Revives
+            EnableCrownForStat("Revives", stats[2], revivesObj);
         }
         if (healingObj != null)
         {
             healingObj.GetComponentInChildren<TextMeshProUGUI>().text = "Healing: " + stats[3].ToString(); // Update Healing
+            EnableCrownForStat("Healing", stats[3], healingObj);
         }
     }
+
+    private void EnableCrownForStat(string statName, int statValue, Transform statObject)
+    {
+        // Map stat name to the corresponding stat index (0: Kills, 1: Damage, 2: Revives, 3: Healing)
+        int statIndex = 0;
+
+        switch (statName)
+        {
+            case "Kills":
+                statIndex = 0;
+                break;
+            case "Damage":
+                statIndex = 1;
+                break;
+            case "Revives":
+                statIndex = 2;
+                break;
+            case "Healing":
+                statIndex = 3;
+                break;
+        }
+
+        // Get crown references for both players
+        Transform player1Crown = gameOverStatsPlayer1.transform.Find($"Stats/{statName}/Crown");
+        Transform player2Crown = gameOverStatsPlayer2.transform.Find($"Stats/{statName}/Crown");
+
+        // Determine which player has the highest stat
+        bool isPlayer1Highest = playerStats[0][statIndex] > playerStats[1][statIndex];
+        bool isPlayer2Highest = playerStats[1][statIndex] > playerStats[0][statIndex];
+
+        // Reset both crowns first
+        if (player1Crown != null) player1Crown.gameObject.SetActive(false);
+        if (player2Crown != null) player2Crown.gameObject.SetActive(false);
+
+        // Activate the appropriate crown
+        if (isPlayer1Highest)
+        {
+            if (player1Crown != null) player1Crown.gameObject.SetActive(true);
+        }
+        else if (isPlayer2Highest)
+        {
+            if (player2Crown != null) player2Crown.gameObject.SetActive(true);
+        }
+    }
+
+
+
 
     // Update player stats
     public void UpdatePlayerStats(int playerIndex, int kills, int damage, int revives, int healing)

@@ -304,9 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xpAmount: 100
-  pickupSound: {fileID: 8300000, guid: 980191ac06c626e409c92196140f0e06, type: 3}
-  detectionRadius: 2
-  moveSpeed: 10
+  pickupSound: {fileID: 8300000, guid: 8ef1ea0242ef80849a7d5ad58df9e802, type: 3}
 --- !u!1 &4969312251219815999
 GameObject:
   m_ObjectHideFlags: 0

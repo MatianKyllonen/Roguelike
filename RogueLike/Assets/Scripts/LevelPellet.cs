@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,16 +9,13 @@ public class LevelPellet : MonoBehaviour
     public AudioClip pickupSound;
     private AudioSource audioSource;
 
-    // New variables for floating toward the closest player
-    public float detectionRadius = 5f;  // Distance at which pellet starts moving toward player
-    public float moveSpeed = 3f;        // Speed at which pellet moves toward player
+    // Removed pellet's detection radius and speed, instead use player's detection radius
     private Transform closestPlayerTransform;  // Reference to the closest player's position
 
     private List<Transform> playerTransforms = new List<Transform>(); // List to store both player transforms
 
     void Start()
     {
-
         audioSource = FindObjectOfType<Movement>().gameObject.GetComponent<AudioSource>();
         Destroy(gameObject, 90f);
         gm = Gamemanager.instance;
@@ -41,13 +37,14 @@ public class LevelPellet : MonoBehaviour
 
             if (closestPlayerTransform != null)
             {
+                Movement playerMovement = closestPlayerTransform.GetComponent<Movement>(); // Get the Movement component
                 float distanceToPlayer = Vector2.Distance(transform.position, closestPlayerTransform.position);
 
-                // Check if the closest player is within detection radius
-                if (distanceToPlayer <= detectionRadius)
+                // Check if the pellet is within the player's detection radius
+                if (distanceToPlayer <= playerMovement.detectionRadius)
                 {
                     // Move the pellet toward the closest player
-                    transform.position = Vector2.Lerp(transform.position, closestPlayerTransform.position, moveSpeed * Time.deltaTime / distanceToPlayer);
+                    transform.position = Vector2.Lerp(transform.position, closestPlayerTransform.position, 10 * Time.deltaTime / distanceToPlayer);
                 }
             }
         }
@@ -76,13 +73,16 @@ public class LevelPellet : MonoBehaviour
     {
         if (collision.CompareTag("Player")) // Ensure it only triggers when colliding with a player
         {
-            if(collision.GetComponent<Movement>().greedyCollector == true)
+            gm.IncreaseXp(xpAmount);
+
+            if (collision.GetComponent<Movement>().greedyCollector == true)
             {
-                collision.GetComponent<Movement>().Heal(2, true);
+                if (xpAmount >= 75)
+                    xpAmount = 75;
+                collision.GetComponent<Movement>().Heal(xpAmount / 3.5f, true);
             }
             audioSource.pitch = (Random.Range(0.9f, 1.1f));
-            audioSource.PlayOneShot(pickupSound, 0.2f);
-            gm.IncreaseXp(xpAmount);
+            audioSource.PlayOneShot(pickupSound, 0.2f);         
             Destroy(gameObject); // Destroy the pellet after it's collected
         }
     }

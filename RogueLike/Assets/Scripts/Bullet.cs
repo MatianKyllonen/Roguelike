@@ -37,17 +37,20 @@ public class Bullet : MonoBehaviour
                         if(lifeStealEffect != null)
                             Instantiate(lifeStealEffect, transform.position, Quaternion.identity);
 
-                        int healingAmount = Mathf.RoundToInt(damage / 5);
+                        int healingAmount = Mathf.RoundToInt(damage / 4.5f);
                         player.Heal(healingAmount);
                         Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 0, healingAmount); 
                         GetComponent<BoxCollider2D>().enabled = false;
                         GetComponent<SpriteRenderer>().enabled = false;
                     }
 
-                }         
+                }
+
+                Destroy(gameObject);
+
             }
 
-            Destroy(gameObject);
+            
 
         }    
     }

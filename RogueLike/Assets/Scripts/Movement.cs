@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
     public int playerNumber = 1;
     public bool knocked;
     public float damageTakenMultiplier = 1f;
+    public float detectionRadius = 5f;
 
     private Vector2 movementInput;
     private float horizontalMove;
@@ -285,25 +286,30 @@ public class Movement : MonoBehaviour
 
     public void Heal(float healingAmount, bool isGem = false)
     {
-        if (health > maxHealth)
+        if (health < maxHealth)
         {
-            if (greedyCollector)
+            if (!greedyCollector)
             {
                 health += Mathf.RoundToInt(healingAmount);
             }
             else if (greedyCollector && isGem)
             {
-                health += Mathf.RoundToInt(2);
-                
+                Gamemanager.instance.UpdatePlayerStats(playerNumber, 0, 0, 0, Mathf.RoundToInt(healingAmount));
+                health += Mathf.RoundToInt(healingAmount);
             }
 
             FlashGreen();
-            CalculateHealth();
         }
 
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+
+        CalculateHealth();
     }
 
-    void Die()
+        void Die()
     {
         GetComponent<Gun>().gunSprite.gameObject.SetActive(false);
         GetComponent<BoxCollider2D>().enabled = false;
@@ -313,6 +319,7 @@ public class Movement : MonoBehaviour
         shooting.enabled = false;
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
+        dashCooldownTimer = 0;
 
         health = 0;
         CalculateHealth();
@@ -395,7 +402,7 @@ public class Movement : MonoBehaviour
 
     void CalculateHealth()
     {
-        healthCount.text = health.ToString() + "/" + maxHealth.ToString();
+        healthCount.text = health.ToString();
         healthbar.value = ((float)health / (float)maxHealth);
     }
 
