@@ -87,13 +87,15 @@ public class SpinningShield : MonoBehaviour
                 player.Heal(healingAmount);
                 Gamemanager.instance.UpdatePlayerStats(player.playerNumber, 0, 0, 0, healingAmount);
             }
-
-            shieldBarUI.SetActive(true);
+        
             health -= 1;
+
             if (regenTimer <= 0) // Start regen timer only if it's not already running
             {
+                shieldBarUI.SetActive(true);
                 regenTimer = regenTime;
             }
+
             CheckSprite();
             Debug.Log(health);
             Destroy(collision.gameObject);

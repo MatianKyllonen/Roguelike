@@ -77,9 +77,9 @@ public class LevelPellet : MonoBehaviour
 
             if (collision.GetComponent<Movement>().greedyCollector == true)
             {
-                if (xpAmount >= 75)
-                    xpAmount = 75;
-                collision.GetComponent<Movement>().Heal(xpAmount / 3.5f, true);
+                if (xpAmount >= 65)
+                    xpAmount = 65;
+                collision.GetComponent<Movement>().Heal(xpAmount / 4f, true);
             }
             audioSource.pitch = (Random.Range(0.9f, 1.1f));
             audioSource.PlayOneShot(pickupSound, 0.2f);         
